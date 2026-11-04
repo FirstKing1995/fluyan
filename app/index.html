@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fluyan · Painel</title>
+<meta name="theme-color" content="#10262E">
+<meta name="robots" content="noindex">
+<link rel="icon" href="../assets/icone.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<div id="raiz"><div style="min-height:100vh;display:grid;place-items:center"><span class="carregando"></span></div></div>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/nucleo.js"></script>
+<script src="js/banco-memoria.js"></script>
+<script>
+  /* O modo demonstração só carrega quando não há servidor configurado. */
+  (function () { var d = !window.FLUYAN_CONFIG.API_URL || /[?&]demo=1/.test(location.search) || localStorage.getItem('fluyan_modo') === '"demo"';
+    if (d) document.write('<script src="js/demo.js"><\/script>'); })();
+</script>
+<script src="js/core.js"></script>
+<script src="js/exportar.js"></script>
+<script src="js/telas-operacao.js"></script>
+<script src="js/telas-cadastros.js"></script>
+<script src="js/telas-presenca.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
