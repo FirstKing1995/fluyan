@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fluyan · Agenda, página e conteúdo para médicos</title>
+<meta name="description" content="Todas as clínicas onde você atende em uma só agenda, sua página com agendamento e um estúdio que cria seus conteúdos para você aprovar.">
+<meta property="og:title" content="Fluyan · Todas as clínicas, uma só agenda">
+<meta property="og:description" content="Agenda com clínicas parceiras, página profissional e estúdio de conteúdo para médicos.">
+<link rel="icon" href="assets/icone.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/tokens.css">
+<style>
+  :root {
+    --bg: var(--mf-perola); --surface: #FFFFFF; --field: #ECEAE3; --ink: var(--mf-tinta); --muted: #4E5F64; --accent: var(--mf-petroleo); --dark: var(--mf-noite);
+    --m: clamp(16px, 2.4vw, 32px); --gap: clamp(120px, 14vw, 200px);
+    --t1: clamp(40px, 5.4vw, 88px); --t2: clamp(32px, 3.6vw, 56px); --t3: clamp(22px, 2vw, 28px); --t4: 18px; --t5: 15px;
+    --r: 999px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 400 var(--t4)/1.6 var(--mf-fonte); -webkit-font-smoothing: antialiased; }
+  h1, h2, h3 { font-family: var(--mf-fonte-titulo); font-weight: 500; letter-spacing: -.025em; line-height: 1.02; margin: 0; }
+  p { margin: 0; }
+  a { color: inherit; }
+  img { display: block; max-width: 100%; }
+  svg.lucide { width: 16px; height: 16px; stroke-width: 1.75; flex: none; }
+  :focus-visible { outline: 3px solid var(--mf-salvia); outline-offset: 3px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 24px; border-radius: var(--r); border: 0; background: var(--accent); color: #fff; font: 600 var(--t5) var(--mf-fonte); text-decoration: none; cursor: pointer; transition: transform 160ms var(--mf-ease), background 160ms; }
+  .btn:hover { background: var(--mf-petroleo-2); }
+  .btn:active { transform: scale(.97); }
+  .btn.claro { background: var(--surface); color: var(--ink); }
+  .btn.claro:hover { background: var(--field); }
+
+  /* navegação */
+  .nav { position: absolute; top: 0; left: 0; right: 0; z-index: 10; display: flex; justify-content: space-between; align-items: center; padding: 22px var(--m); font-size: var(--t5); }
+  .marca { display: flex; align-items: center; gap: 10px; text-decoration: none; font: 500 24px var(--mf-fonte-titulo); letter-spacing: -.02em; }
+  .nav nav { display: flex; align-items: center; gap: 28px; }
+  .nav nav a:not(.btn) { text-decoration: none; transition: color 160ms; }
+  .nav nav a:not(.btn):hover { color: var(--accent); }
+  .nav .btn { height: 40px; padding: 0 18px; }
+
+  /* herói: frase partida por uma moldura */
+  .heroi { position: relative; height: 280svh; }
+  .palco { position: sticky; top: 0; height: 100svh; overflow: hidden; }
+  .palco h1 { position: absolute; inset: 0; display: flex; justify-content: space-between; align-items: flex-start; padding-top: calc(30svh + 4px) !important; padding: 0 var(--m); font-size: clamp(40px, 3.6vw, 60px); z-index: 4; pointer-events: none; }
+  .palco h1 .metade { pointer-events: auto; }
+  .metade { animation: chega 900ms var(--mf-ease) both; }
+  .metade.b { animation-delay: 120ms; }
+  @keyframes chega { from { opacity: 0; transform: translateY(18px); } }
+  .metade { white-space: nowrap; }
+  .rolo { position: absolute; left: 50%; top: 0; width: 34vw; transform: translateX(-50%); z-index: 3; }
+  .rolo-trilho { display: flex; flex-direction: column; gap: 24px; will-change: transform; transition: transform 600ms var(--mf-ease); }
+  .quadro { width: 34vw; aspect-ratio: 16 / 12; border-radius: 16px; overflow: hidden; flex: none; }
+  .apoio { position: absolute; left: var(--m); bottom: 32px; max-width: 30ch; font-size: var(--t4); z-index: 2; }
+  .apoio .btn { margin-top: 18px; }
+  .legenda-quadro { position: absolute; right: var(--m); bottom: 32px; font-size: var(--t5); color: var(--muted); text-align: right; max-width: 24ch; z-index: 2; }
+
+  /* fragmentos de interface: convenções do produto */
+  [data-ui] { font-family: var(--mf-fonte); background: #fff; color: var(--ink); border: 1px solid #E6E3DC; font-size: 14px; line-height: 1.45; }
+  [data-ui] .ui-top { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; border-bottom: 1px solid #EEECE6; gap: 10px; }
+  [data-ui] .ui-top b { font-weight: 600; }
+  [data-ui] .ui-top small { color: #5A6866; display: block; font-size: 13px; }
+  [data-ui] .ui-chip { display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px; border-radius: 99px; font-size: 12.5px; font-weight: 600; white-space: nowrap; }
+  .ui-ok { background: #E3F3EC; color: #1E6B50; } .ui-al { background: #FAF0DC; color: #7A5418; } .ui-er { background: #F8E6E4; color: #C2554D; } .ui-sa { background: #E4F1EC; color: #0F5257; }
+  [data-ui] .ui-barra { height: 8px; border-radius: 99px; background: #F0EEE8; position: relative; margin: 0 18px; }
+  [data-ui] .ui-barra i { position: absolute; inset: 0 auto 0 0; border-radius: 99px; background: #1D7874; transition: width 300ms var(--mf-ease), background 300ms; }
+  [data-ui] .ui-barra .min { position: absolute; top: -4px; bottom: -4px; width: 2px; background: #C8A96A; border-radius: 2px; }
+  [data-ui] .ui-slots { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; padding: 14px 18px 18px; }
+  [data-ui] .slot { border: 1px solid #E6E3DC; border-radius: 10px; padding: 7px 8px; font-size: 12.5px; text-align: left; background: #fff; font-family: inherit; color: inherit; cursor: pointer; transition: border-color 160ms, background 160ms, transform 160ms; }
+  [data-ui] .slot b { display: block; font-variant-numeric: tabular-nums; font-size: 13px; }
+  [data-ui] .slot span { color: #5A6866; }
+  [data-ui] .slot.ocupado { background: #F6F5F1; cursor: default; }
+  [data-ui] .slot.livre:hover { border-color: #1D7874; transform: translateY(-1px); }
+  [data-ui] .slot.novo { background: #E4F1EC; border-color: #1D7874; }
+  [data-ui] .slot:disabled { opacity: .45; cursor: default; }
+
+  /* seções */
+  section { scroll-margin-top: 20px; }
+  .sec { margin-top: var(--gap); padding-top: 12px; }
+  .wrap { padding: 12px var(--m) 0; }
+
+  /* vitrine: entrada e saída */
+  .vitrine { display: grid; grid-template-columns: 1fr 1fr; min-height: 90svh; }
+  .entrada { background: var(--dark); color: #E8EEEC; position: relative; padding: 18svh var(--m) 120px; }
+  .saida { background: var(--surface); position: relative; padding: 18svh var(--m) 120px; display: flex; justify-content: center; }
+  .entrada label { display: block; font-size: var(--t5); color: #AFC0BE; margin-bottom: 14px; }
+  .entrada textarea { width: min(34ch, 100%); min-height: 220px; background: transparent; border: 0; color: #fff; font: 400 var(--t3)/1.4 var(--mf-fonte); resize: none; padding: 0; caret-color: var(--mf-salvia); }
+  .entrada textarea:focus { outline: none; }
+  .vitrine .partido { position: absolute; bottom: 32px; font-size: var(--t2); }
+  .entrada .partido { left: var(--m); color: #fff; }
+  .saida .partido { right: var(--m); }
+  .estudio-ui { width: min(500px, 100%); border-radius: 16px; overflow: hidden; align-self: flex-start; }
+  .laminas { display: grid; grid-template-columns: 1.15fr 1fr 1fr; gap: 10px; padding: 16px 18px; }
+  .lam { aspect-ratio: 4 / 5; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; justify-content: flex-end; font-size: 11px; overflow: hidden; }
+  .lam.capa { background: var(--mf-petroleo); color: #fff; }
+  .lam.capa b { font: 500 17px/1.12 var(--mf-fonte-titulo); letter-spacing: -.01em; }
+  .lam.cont { background: #F6F5F1; color: var(--ink); justify-content: flex-start; }
+  .lam.cont em { font: 500 30px var(--mf-fonte-titulo); color: var(--mf-petroleo); font-style: normal; display: block; margin: 18px 0 6px; }
+  .lam.cont b { font: 500 13px/1.2 var(--mf-fonte-titulo); }
+  .lam small { opacity: .75; margin-top: 8px; font-size: 9.5px; }
+  .ui-exp { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 18px 18px; }
+  .ui-exp span { display: inline-flex; gap: 6px; align-items: center; height: 32px; padding: 0 12px; border: 1px solid #E6E3DC; border-radius: 99px; font-size: 12.5px; font-weight: 600; }
+  .ui-exp svg { color: #0F5257; width: 14px; height: 14px; }
+  .ui-alerta { margin: 0 18px 14px; padding: 9px 12px; border-radius: 10px; background: #E3F3EC; color: #1E6249; font-size: 12.5px; display: flex; gap: 8px; align-items: center; }
+  .ui-alerta.ruim { background: #FAF0DC; color: #6E4E14; }
+
+  /* como funciona */
+  .coluna { width: min(600px, 100%); margin-left: 30vw; }
+  .coluna h2 { font-size: var(--t2); margin-bottom: 48px; }
+  .etapa { margin-bottom: 72px; }
+  .etapa p { color: var(--muted); }
+  .etapa p b { color: var(--ink); font-weight: 600; }
+  .prova { margin-top: 20px; }
+  .prova img { width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; }
+  .prova figcaption { font-size: var(--t5); color: var(--muted); margin-top: 8px; }
+  .regras-ui { border-radius: 14px; overflow: hidden; }
+  .regras-ui .linha { display: grid; grid-template-columns: 90px 1fr 1fr 70px 70px; gap: 8px; padding: 10px 18px; align-items: center; border-top: 1px solid #EEECE6; font-variant-numeric: tabular-nums; } /* taste-skill-ignore: dentro de [data-ui] */
+  .regras-ui .linha.cab { color: #5A6866; font-size: 12.5px; border-top: 0; }
+  .convite-ui { border-radius: 14px; padding: 16px 18px; }
+  .convite-ui code { display: block; margin-top: 8px; padding: 10px 12px; background: #F6F5F1; border-radius: 8px; font-size: 13px; overflow-wrap: anywhere; }
+
+  /* recursos: saída fixa, controles vivos */
+  .recursos { display: grid; grid-template-columns: 1fr 1fr; }
+  .fixo { position: sticky; top: 0; height: 100svh; background: var(--field); display: grid; place-items: center; padding: var(--m); }
+  .pagina-ui { width: min(420px, 100%); border-radius: 22px; overflow: hidden; --c: #0F5257; }
+  .pagina-ui .topo-pg { padding: 28px 24px 22px; background: color-mix(in srgb, var(--c) 14%, #F6F5F1); transition: background 300ms; }
+  .pagina-ui .foto { width: 64px; height: 64px; border-radius: 50%; background: color-mix(in srgb, var(--c) 25%, #fff); border: 3px solid #fff; display: grid; place-items: center; font: 600 24px var(--mf-fonte-titulo); color: var(--c); }
+  .pagina-ui h3 { font-size: 26px; margin: 14px 0 2px; }
+  .pagina-ui .selo { display: inline-flex; gap: 6px; align-items: center; font-size: 12px; font-weight: 600; color: var(--c); background: #fff; border: 1px solid #E6E3DC; border-radius: 99px; padding: 4px 10px; margin-top: 10px; }
+  .pagina-ui .corpo-pg { padding: 18px 24px 22px; display: flex; flex-direction: column; gap: 10px; }
+  .pagina-ui .srv { display: flex; justify-content: space-between; border: 1px solid #E6E3DC; border-radius: 12px; padding: 10px 12px; }
+  .pagina-ui .srv small { display: block; color: #5A6866; }
+  .pagina-ui .agendar { height: 42px; border-radius: 99px; background: var(--c); color: #fff; display: grid; place-items: center; font-weight: 600; transition: background 300ms; }
+  .controles { padding: 72px var(--m) 30svh calc(var(--m) + 4vw); }
+  .controles h2 { font-size: var(--t2); margin-bottom: 72px; max-width: 12ch; }
+  .bloco { min-height: 50svh; max-width: 44ch; }
+  .bloco h3 { font-size: var(--t3); margin-bottom: 12px; line-height: 1.15; }
+  .bloco p { color: var(--muted); margin-bottom: 20px; }
+  .ctl-cores { display: flex; gap: 10px; }
+  .ctl-cores button { width: 44px; height: 44px; border-radius: 50%; border: 3px solid var(--bg); cursor: pointer; transition: transform 160ms; }
+  .ctl-cores button[aria-pressed="true"] { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .ctl-cores button:hover { transform: scale(1.08); }
+  .ctl-texto { width: 100%; height: 48px; border: 0; background: var(--field); border-radius: 12px; padding: 0 16px; font: 400 var(--t4) var(--mf-fonte); color: var(--ink); }
+  .ctl-seg { display: inline-flex; background: var(--field); border-radius: 99px; padding: 4px; }
+  .ctl-seg button { border: 0; background: none; height: 40px; padding: 0 16px; border-radius: 99px; font: 600 var(--t5) var(--mf-fonte); color: var(--muted); cursor: pointer; }
+  .ctl-seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); }
+  .ctl-chave { display: inline-flex; align-items: center; gap: 12px; cursor: pointer; font-weight: 600; }
+  .ctl-chave input { appearance: none; width: 52px; height: 30px; border-radius: 99px; background: var(--field); position: relative; cursor: pointer; transition: background 200ms; margin: 0; }
+  .ctl-chave input::after { content: ''; position: absolute; top: 4px; left: 4px; width: 22px; height: 22px; border-radius: 50%; background: #fff; transition: transform 200ms var(--mf-ease); }
+  .ctl-chave input:checked { background: var(--accent); }
+  .ctl-chave input:checked::after { transform: translateX(22px); }
+
+  /* repouso: a gravura */
+  .repouso { display: grid; grid-template-columns: 5fr 7fr; gap: var(--m); align-items: start; }
+  .repouso figure { margin: 0; overflow: hidden; }
+  .repouso img { width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; transform: scale(1.08); transition: transform 1.2s var(--mf-ease); }
+  .repouso p.frase { font: 500 var(--t2)/1.12 var(--mf-fonte-titulo); letter-spacing: -.02em; max-width: 16ch; margin-bottom: 24px; }
+  .repouso h2 { font-size: var(--t2); max-width: 15ch; margin-bottom: 28px; }
+  .repouso .cita { font-size: var(--t5); color: var(--muted); max-width: 40ch; }
+  .lado-dir { padding-bottom: 8px; }
+  .lado-dir img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; margin-top: 40px; }
+
+  /* planos: tabela grande */
+  .planos h2 { font-size: var(--t2); }
+  .tabela { width: 100%; border-collapse: collapse; font-size: 18px; }
+  .tabela th, .tabela td { text-align: left; padding: 20px 16px; vertical-align: top; }
+  .tabela thead th { padding-top: 28px; }
+  .tabela thead th .nome { display: block; font: 600 clamp(24px, 2.4vw, 36px)/1.1 var(--mf-fonte-titulo); }
+  .tabela thead th .preco { display: block; font: 400 clamp(24px, 2.4vw, 36px)/1.2 var(--mf-fonte-titulo); margin-top: 6px; }
+  .tabela thead th .preco small { font: 400 16px var(--mf-fonte); color: var(--muted); }
+  .tabela tbody tr:nth-child(odd) td, .tabela tbody tr:nth-child(odd) th { background: var(--field); }
+  .tabela tbody th { font-weight: 400; color: var(--muted); width: 30%; }
+  .tabela .rec { background: var(--mf-salvia-suave) !important; }
+  .tabela tfoot td { padding-top: 24px; }
+  .tabela .btn { width: 100%; }
+  .nota-planos { margin-top: 20px; font-size: var(--t5); color: var(--muted); max-width: 70ch; }
+  .planos-movel { display: none; }
+  .planos-movel-titulo { display: none; }
+
+  /* perguntas: índice e uma resposta */
+  .faq { display: grid; grid-template-columns: 5fr 1fr 6fr; }
+  .faq ul { list-style: none; margin: 0; padding: 0; }
+  .faq li + li { margin-top: 18px; }
+  .faq .q { display: flex; gap: 14px; align-items: baseline; background: none; border: 0; padding: 0; font: 500 var(--t4) var(--mf-fonte); color: var(--muted); cursor: pointer; text-align: left; transition: color 150ms; }
+  .faq .q::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--muted); flex: none; transform: translateY(-2px); transition: background 150ms; }
+  .faq .q[aria-selected="true"] { color: var(--ink); }
+  .faq .q[aria-selected="true"]::before { background: var(--accent); }
+  .faq h2 { font: 500 var(--t4) var(--mf-fonte); color: var(--muted); letter-spacing: 0; margin-bottom: 26px; }
+  .faq .painel { position: sticky; top: 120px; grid-column: 3; align-self: start; font-size: 22px; line-height: 1.45; max-width: 40ch; transition: opacity 150ms; }
+  .faq .resp-movel { display: none; }
+
+  /* chamada final: frase com lacuna */
+  .final form { display: flex; flex-wrap: wrap; align-items: center; gap: .25em; font: 500 clamp(32px, 4.4vw, 72px)/1.15 var(--mf-fonte-titulo); letter-spacing: -.02em; }
+  .final input { font: inherit; letter-spacing: inherit; width: 7.5em; height: 1.15em; border: 0; background: var(--field); border-radius: .35em; padding: 0 .3em; color: var(--ink); vertical-align: baseline; }
+  .final input::placeholder { color: #8A9694; }
+  .final button { font: inherit; letter-spacing: inherit; height: 1.15em; border: 0; border-radius: .35em; padding: 0 .35em; background: var(--accent); color: #fff; cursor: pointer; transition: background 160ms, transform 160ms; }
+  .final button:hover { background: var(--mf-petroleo-2); }
+  .final .depois { font-size: 16px; color: var(--muted); margin-top: 20px; max-width: 60ch; }
+  .cadastro { display: none; margin-top: 40px; max-width: 760px; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .cadastro.aberto { display: grid; }
+  .cadastro label { font-size: var(--t5); font-weight: 600; }
+  .cadastro input, .cadastro select { display: block; width: 100%; height: 50px; margin-top: 6px; border: 0; border-radius: 12px; background: var(--field); padding: 0 14px; font: 400 var(--t4) var(--mf-fonte); color: var(--ink); }
+  .cadastro .inteiro { grid-column: span 2; }
+  .cadastro .msg { grid-column: span 2; font-size: var(--t5); color: var(--muted); }
+
+  /* rodapé */
+  footer { margin-top: 30svh; padding: 0 var(--m) 30px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; gap: 24px; font-size: var(--t5); }
+  footer .meio { display: flex; gap: 24px; }
+  footer .meio a { text-decoration: none; }
+  footer .meio a:hover { color: var(--accent); }
+  footer .fim { text-align: right; color: var(--muted); }
+  footer .creditos { grid-column: 1 / -1; color: var(--muted); font-size: 13px; }
+  footer .desc { color: var(--muted); }
+
+  /* entradas */
+  .sobe { transform: translateY(28px); transition: transform 800ms var(--mf-ease); }
+  .sobe.visto { transform: none; }
+  .sem-js .sobe { opacity: 1; transform: none; }
+
+  @media (max-width: 860px) {
+    :root { --gap: 104px; }
+    .nav nav a:not(.btn) { display: none; }
+    .heroi { height: auto; }
+    .palco { position: relative; height: auto; overflow: visible; padding: 96px var(--m) 40px; }
+    .palco h1 { position: static; display: block; padding: 0 !important; font-size: 10vw; }
+    .metade { white-space: normal; display: block; }
+    .metade.b { text-align: right; margin-top: 14px; }
+    .rolo { position: static; transform: none; width: 100%; margin-top: 18px; }
+    .rolo-trilho { transform: none !important; }
+    .quadro { width: 100%; aspect-ratio: auto; }
+    .quadro:not(:first-child) { display: none; }
+    .apoio, .legenda-quadro { position: static; max-width: none; margin-top: 22px; text-align: left; }
+    [data-ui] .ui-slots { grid-template-columns: repeat(3, 1fr); }
+    .vitrine { grid-template-columns: 1fr; }
+    .entrada, .saida { min-height: 62svh; padding: 48px var(--m) 110px; }
+    .entrada textarea { font-size: 18px; min-height: 160px; }
+    .vitrine .partido { font-size: 11vw; }
+    .coluna { margin-left: 0; }
+    .regras-ui .linha { grid-template-columns: 70px 1fr 1fr 44px 44px; padding: 10px 12px; font-size: 13px; }
+    .recursos { grid-template-columns: 1fr; }
+    .fixo { position: relative; height: auto; padding: 32px 12px 8px; align-items: start; }
+    .pagina-ui { width: min(380px, 100%); }
+    .controles { padding: 48px var(--m) 20svh; }
+    .bloco { min-height: auto; margin-bottom: 64px; }
+    .repouso { grid-template-columns: 1fr; }
+    .tabela { display: none; }
+    .planos-movel { display: grid; gap: 48px; margin-top: 32px; }
+    .planos-movel-titulo { display: block; font-size: var(--t2); }
+    .plano-m { background: var(--surface); border-radius: 20px; padding: 24px; }
+    .plano-m.rec { background: var(--mf-salvia-suave); }
+    .plano-m h3 { font-size: 9vw; }
+    .plano-m .preco { font: 400 7vw var(--mf-fonte-titulo); margin: 4px 0 16px; }
+    .plano-m dl { margin: 0 0 18px; }
+    .plano-m dt { color: var(--muted); font-size: 15px; }
+    .plano-m dd { margin: 0 0 10px; font-size: 17px; }
+    .plano-m .btn { width: 100%; }
+    .faq { grid-template-columns: 1fr; }
+    .faq .painel { display: none; }
+    .faq .resp-movel { font-size: 17px; margin: 10px 0 0 22px; color: var(--ink); }
+    .faq .resp-movel.aberta { display: block; }
+    
+    .final input { width: calc(100% - 4.4em); }
+    .final form { font-size: 8vw; }
+    .cadastro { grid-template-columns: 1fr; }
+    .cadastro .inteiro, .cadastro .msg { grid-column: auto; }
+    footer { grid-template-columns: 1fr; margin-top: 20svh; gap: 8px; }
+    footer .fim { text-align: left; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .sobe { transform: none; transition: none; }
+    .rolo-trilho, .repouso img { transition: none; }
+  }
+</style>
+</head>
+<body class="sem-js">
+<header class="nav">
+  <a class="marca" href="#" aria-label="Fluyan, início"><svg width="30" height="30" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="15" fill="#0F5257"/><path d="M24 13v22M13 24h6.5c4.2 0 5.6-6 9.8-6H35" fill="none" stroke="#fff" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Fluyan</a>
+  <nav aria-label="Principal"><a href="#estudio">Estúdio</a><a href="#pagina">Sua página</a><a href="#planos">Planos</a><a href="app/">Entrar</a><a class="btn" href="#comecar">Assinar</a></nav>
+</header>
+
+<main>
+<section class="heroi" id="topo" aria-label="Apresentação">
+  <div class="palco">
+    <h1><span class="metade a">Todas as clínicas,</span> <span class="metade b">uma só agenda.</span></h1>
+    <div class="rolo" aria-label="Partes do Fluyan">
+      <div class="rolo-trilho" id="trilho">
+        <!-- 1. agenda da quinta: a parte viva -->
+        <div class="quadro" data-ui id="agenda-ui">
+          <div class="ui-top"><div><b>Quinta, 5 de novembro · Clínica Vida</b><small>Dra. Helena Duarte · consultas de 30 minutos</small></div><span class="ui-chip ui-ok" id="ag-chip">Acima do mínimo</span></div>
+          <div class="ui-top" style="border:0;padding-bottom:8px"><small id="ag-txt">9 de 15 consultas · mínimo 8</small><small>toque num horário livre</small></div>
+          <div class="ui-barra"><i id="ag-barra" style="width:60%"></i><span class="min" style="left:53.3%"></span></div>
+          <div class="ui-slots" id="ag-slots"></div>
+        </div>
+        <!-- 2. portal da clínica -->
+        <div class="quadro" data-ui>
+          <div class="ui-top"><div><b>Recepção · Clínica Vida</b><small>vê só os horários da Dra. Helena neste local</small></div><span class="ui-chip ui-sa">Portal da clínica</span></div>
+          <div class="ui-top"><div><b>08:00 · Mariana S.</b><small>Consulta presencial</small></div><span class="ui-chip ui-ok">Confirmado</span></div>
+          <div class="ui-top"><div><b>08:40 · Paulo R.</b><small>Retorno</small></div><span class="ui-chip ui-ok">Confirmado</span></div>
+          <div class="ui-top"><div><b>10:00 · Ana Clara M.</b><small>Consulta presencial</small></div><span class="ui-chip ui-al">Alteração pedida</span></div>
+          <div class="ui-top" style="border:0"><div><b>Quinta, 12 de novembro</b><small>data provisória, aguardando confirmação</small></div><span class="ui-chip ui-al">Provisória</span></div>
+        </div>
+        <!-- 3. estúdio -->
+        <div class="quadro" data-ui>
+          <div class="ui-top"><div><b>Estúdio · carrossel para Instagram</b><small>5 sinais de que é hora do check-up</small></div><span class="ui-chip ui-al">Em revisão</span></div>
+          <div class="laminas"><div class="lam capa"><b>5 sinais de que é hora do check-up</b><small>Dra. Helena Duarte · CRM 000000 CE</small></div><div class="lam cont"><em>01</em><!-- taste-skill-ignore: numeração das lâminas do produto --><b>Cansaço que não passa</b></div><div class="lam cont"><em>02</em><b>Exames atrasados</b></div></div>
+          <div class="ui-exp"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3-3-9 9"/></svg>Imagens finais</span><span>Editável no Canva</span><span>Copy em DOCX</span></div>
+        </div>
+        <!-- 4. página pública -->
+        <div class="quadro" data-ui>
+          <div class="ui-top"><div><b>Página da Dra. Helena · agendamento</b><small>o paciente escolhe local, dia e horário</small></div><span class="ui-chip ui-sa">Reserva por 10 min</span></div>
+          <div class="ui-slots" style="grid-template-columns:repeat(4,1fr)"><button class="slot ocupado" tabindex="-1"><b>qua</b><span>4 nov</span></button><button class="slot novo" tabindex="-1"><b>qui</b><span>5 nov</span></button><button class="slot ocupado" tabindex="-1"><b>sex</b><span>6 nov</span></button><button class="slot ocupado" tabindex="-1"><b>seg</b><span>9 nov</span></button>
+            <button class="slot" tabindex="-1"><b>14:00</b></button><button class="slot novo" tabindex="-1"><b>14:40</b></button><button class="slot" tabindex="-1"><b>15:20</b></button><button class="slot" tabindex="-1"><b>16:00</b></button></div>
+          <div class="ui-top" style="border:0"><div><b>Consulta agendada · código ZX7WNY</b><small>orientações e confirmação pelo WhatsApp</small></div><span class="ui-chip ui-ok">Confirmado</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="apoio"><p>Fluyan reúne a agenda de todas as clínicas onde você atende, sua página com agendamento e um estúdio que prepara seus conteúdos para você aprovar.</p><a class="btn" href="#comecar">Assinar o Fluyan</a></div>
+    <p class="legenda-quadro" id="legenda-quadro">A quinta na Clínica Vida: 15 vagas no máximo, 8 para valer a ida.</p>
+  </div>
+</section>
+
+<section class="sec" id="estudio" aria-labelledby="t-estudio">
+  <div class="vitrine">
+    <div class="entrada">
+      <label for="pedido">Seu pedido ao Estúdio</label>
+      <textarea id="pedido" spellcheck="false">Carrossel com 5 sinais de que é hora de fazer o check-up anual, tom acolhedor</textarea>
+      <h2 class="partido" id="t-estudio">Você pede,</h2>
+    </div>
+    <div class="saida">
+      <div class="estudio-ui sobe" data-ui>
+        <div class="ui-top"><div><b id="es-titulo">5 sinais de que é hora de fazer o check-up anual</b><small id="es-sub">carrossel · 6 lâminas · Instagram</small></div><span class="ui-chip ui-al">Em revisão</span></div>
+        <div class="laminas"><div class="lam capa"><b id="es-capa">5 sinais de que é hora de fazer o check-up anual</b><small>Dra. Helena Duarte · CRM 000000 CE</small></div><div class="lam cont"><em>01</em><!-- taste-skill-ignore: numeração das lâminas do produto --><b id="es-l1">Observe os sinais do dia a dia</b></div><div class="lam cont"><em>02</em><b id="es-l2">Mantenha os exames em dia</b></div></div>
+        <div class="ui-alerta" id="es-alerta"><svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg><span>Sem alertas de publicidade médica. Revise o conteúdo clínico antes de aprovar.</span></div>
+        <div class="ui-exp"><span>Imagens finais</span><span>Editável no Canva</span><span>Copy em DOCX</span></div>
+      </div>
+      <h2 class="partido" aria-hidden="true">o Estúdio entrega.</h2>
+    </div>
+  </div>
+</section>
+
+<section class="sec wrap" aria-labelledby="t-como">
+  <div class="coluna">
+    <h2 id="t-como">Como começa</h2>
+    <div class="etapa">
+      <p class="sobe"><b>No primeiro dia,</b> você cadastra os locais onde atende, os dias e horários de cada um e, para cada clínica parceira, o mínimo de consultas que faz a ida valer a pena e o máximo que o dia comporta. O sistema avisa quando um dia está abaixo do mínimo e nunca deixa passar do máximo.</p>
+      <div class="prova regras-ui sobe" data-ui>
+        <div class="linha cab"><span>Dia</span><span>Início</span><span>Fim</span><span>Mín.</span><span>Máx.</span></div>
+        <div class="linha"><span>Segunda</span><span>13:00</span><span>19:00</span><span>4</span><span>9</span></div>
+        <div class="linha"><span>Quinta</span><span>08:00</span><span>17:00</span><span>8</span><span>15</span></div>
+        <div class="linha"><span>Sexta</span><span>08:00</span><span>11:00</span><span>0</span><span>6</span></div>
+      </div>
+    </div>
+    <div class="etapa">
+      <p class="sobe"><b>Na mesma semana,</b> cada clínica parceira recebe um convite de uso único. A recepção cria a própria senha e passa a agendar direto na sua agenda, vendo só os horários daquele local. Prontuário, financeiro e pacientes de outros lugares continuam fora do alcance dela.</p>
+      <figure class="prova sobe"><img src="assets/ponte-branca.jpg" width="1600" height="1000" alt="Ponte branca em arco sobre água cinzenta" loading="lazy"><figcaption>Cada clínica liga à mesma agenda, sem cruzar a informação das outras.</figcaption></figure>
+    </div>
+    <div class="etapa">
+      <p class="sobe"><b>A partir daí,</b> seus pacientes agendam pela sua página. O horário escolhido fica reservado por dez minutos enquanto a pessoa preenche os dados, e a mesma agenda vale para o painel, para a clínica e para a página: dois agendamentos nunca disputam o mesmo horário.</p>
+      <figure class="prova sobe"><img src="assets/escada-branca.jpg" width="1600" height="1000" alt="Abertura numa parede branca mostrando uma escada branca" loading="lazy"><figcaption>Um caminho claro do primeiro clique até a confirmação.</figcaption></figure>
+    </div>
+    <div class="etapa">
+      <p class="sobe"><b>Toda semana,</b> o Estúdio prepara posts, carrosséis e roteiros de vídeo no seu tom, com seu nome e seu registro. Você revisa, aprova e baixa o arquivo final e o editável: imagens prontas, um arquivo que abre no Canva, um projeto do CapCut e o texto em DOCX.</p>
+      <figure class="prova sobe"><img src="assets/estetoscopio-1819.jpg" width="1200" height="1883" alt="Estetoscópio de madeira de Laennec, de 1819, em duas peças" loading="lazy" style="aspect-ratio:16/9;object-position:50% 30%"><figcaption>O estetoscópio de Laennec, 1819. As ferramentas mudam; quem decide continua sendo você.</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="pagina" aria-labelledby="t-pagina">
+  <div class="recursos">
+    <div class="fixo">
+      <div class="pagina-ui" data-ui id="pg-ui">
+        <div class="topo-pg"><div class="foto" id="pg-ini">H</div><h3 id="pg-nome">Dra. Helena Duarte</h3><span style="font-size:13px;color:#4E5F64">Clínica médica · Fortaleza</span><br><span class="selo">CRM 000000 CE</span></div>
+        <div class="corpo-pg">
+          <div class="srv"><span><b>Consulta presencial</b><small>40 min · Clínica Vida ou Consultório Aldeota</small></span><b id="pg-preco" hidden>R$ 380</b></div>
+          <div class="srv" id="pg-tele"><span><b>Teleconsulta</b><small>30 min · por vídeo</small></span><b id="pg-preco2" hidden>R$ 300</b></div>
+          <div class="agendar" id="pg-cta">Agendar consulta</div>
+        </div>
+      </div>
+    </div>
+    <div class="controles">
+      <h2 id="t-pagina">Sua página, do seu jeito</h2>
+      <div class="bloco sobe"><h3>Com o seu nome, como os pacientes conhecem.</h3><p>A página nasce do seu perfil, com o registro no conselho sempre à vista no topo e no rodapé.</p><label class="sr" for="ctl-nome">Nome na página</label><input class="ctl-texto" id="ctl-nome" value="Dra. Helena Duarte" maxlength="40"></div>
+      <div class="bloco sobe"><h3>Na sua cor, sem perder a sobriedade.</h3><p>Você escolhe o tom de destaque. O resto segue uma composição calma, pensada para a leitura no celular.</p><div class="ctl-cores" role="group" aria-label="Cor de destaque"><button style="background:#0F5257" data-cor="#0F5257" aria-pressed="true" aria-label="Petróleo"></button><button style="background:#2E5E8C" data-cor="#2E5E8C" aria-pressed="false" aria-label="Azul"></button><button style="background:#7A4E6B" data-cor="#7A4E6B" aria-pressed="false" aria-label="Ameixa"></button><button style="background:#8A6A2E" data-cor="#8A6A2E" aria-pressed="false" aria-label="Bronze"></button></div></div>
+      <div class="bloco sobe"><h3>Preço aparece só se você quiser.</h3><p>Cada serviço tem a própria chave. Desligada por padrão, para você decidir com calma o que mostrar.</p><label class="ctl-chave"><input type="checkbox" id="ctl-preco"> Mostrar preços</label></div>
+      <div class="bloco sobe"><h3>Presencial, online ou os dois.</h3><p>Ative a teleconsulta e ela entra na mesma agenda, com horários próprios e sem conflito com o consultório.</p><div class="ctl-seg" role="group" aria-label="Modalidades"><button aria-pressed="false" data-mod="pres">Só presencial</button><button aria-pressed="true" data-mod="ambos">Presencial e online</button></div></div>
+      <div class="bloco sobe"><h3>Blocos que você reordena e publica.</h3><p>Capa, sobre, atendimentos, agendamento, locais, perguntas frequentes. Antes de publicar, um verificador aponta frases que ferem as regras de publicidade médica.</p><div class="ctl-seg" role="group" aria-label="Botão principal"><button aria-pressed="true" data-cta="Agendar consulta">Agendar consulta</button><button aria-pressed="false" data-cta="Ver horários">Ver horários</button></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec wrap repouso" aria-labelledby="t-cuidado">
+  <figure class="sobe"><img id="gravura" src="assets/coracao-1686.jpg" width="1195" height="1900" alt="Gravura de 1686 com estudos da anatomia do coração" loading="lazy"></figure>
+  <div class="lado-dir">
+    <h2 id="t-cuidado">Dados de pacientes ficam no lugar deles</h2>
+    <p class="cita sobe">Secretárias e clínicas veem só o que precisam para agendar. O Estúdio nunca recebe informação de pacientes. Ações importantes ficam registradas com autor, data e motivo, e cada paciente pode pedir a exportação dos próprios dados, como a LGPD prevê.</p>
+    <p class="cita sobe" style="margin-top:16px">Gravura: anatomia do coração, 1686.</p>
+  </div>
+</section>
+
+<section class="sec wrap planos" id="planos" aria-labelledby="t-planos">
+  <h2 id="t-planos" style="margin-bottom:28px">Planos mensais</h2>
+  <table class="tabela sobe">
+    <thead><tr class="sobe"><th><span class="nome" style="font-size:20px;font-family:var(--mf-fonte);font-weight:500;color:var(--muted)">Por mês, sem fidelidade</span></th>
+      <th><span class="nome">Essencial</span><span class="preco">R$ 497 <small>por mês</small></span></th>
+      <th class="rec"><span class="nome">Profissional</span><span class="preco">R$ 997 <small>por mês</small></span></th>
+      <th><span class="nome">Premium</span><span class="preco">R$ 1.997 <small>por mês</small></span></th>
+      <th><span class="nome">Enterprise</span><span class="preco">Sob consulta</span></th></tr></thead>
+    <tbody>
+      <tr class="sobe"><th>Médicos</th><td>1</td><td class="rec">1</td><td>Até 3</td><td>Quantos a clínica tiver</td></tr>
+      <tr class="sobe"><th>Acessos da equipe e clínicas</th><td>3</td><td class="rec">6</td><td>12</td><td>Sob medida</td></tr>
+      <tr class="sobe"><th>Agenda com clínicas parceiras</th><td>Incluída</td><td class="rec">Incluída</td><td>Incluída</td><td>Incluída</td></tr>
+      <tr class="sobe"><th>Página com agendamento</th><td>Incluída</td><td class="rec">Incluída</td><td>Incluída</td><td>Uma por médico</td></tr>
+      <tr class="sobe"><th>Peças do Estúdio por mês</th><td>20</td><td class="rec">60</td><td>150</td><td>Sob medida</td></tr>
+      <tr class="sobe"><th>Vídeos do Estúdio por mês</th><td>Não incluídos</td><td class="rec">10</td><td>30</td><td>Sob medida</td></tr>
+      <tr class="sobe"><th>Implantação</th><td>Guiada pelo painel</td><td class="rec">Guiada pelo painel</td><td>Com uma sessão de apoio</td><td>Acompanhada</td></tr>
+    </tbody>
+    <tfoot><tr><td></td><td><a class="btn claro" href="#comecar" data-plano="essencial">Assinar</a></td><td class="rec"><a class="btn" href="#comecar" data-plano="profissional">Assinar</a></td><td><a class="btn claro" href="#comecar" data-plano="premium">Assinar</a></td><td><a class="btn claro" href="#comecar" data-plano="enterprise">Conversar</a></td></tr></tfoot>
+  </table>
+  <div class="planos-movel">
+    <div class="sobe plano-m"><h3>Essencial</h3><p class="preco">R$ 497 por mês</p><dl><dt>Médicos</dt><dd>1</dd><dt>Peças do Estúdio</dt><dd>20 por mês</dd><dt>Vídeos</dt><dd>Não incluídos</dd></dl><a class="btn claro" href="#comecar" data-plano="essencial">Assinar</a></div>
+    <div class="sobe plano-m rec"><h3>Profissional</h3><p class="preco">R$ 997 por mês</p><dl><dt>Médicos</dt><dd>1</dd><dt>Peças do Estúdio</dt><dd>60 por mês</dd><dt>Vídeos</dt><dd>10 por mês</dd></dl><a class="btn" href="#comecar" data-plano="profissional">Assinar</a></div>
+    <div class="sobe plano-m"><h3>Premium</h3><p class="preco">R$ 1.997 por mês</p><dl><dt>Médicos</dt><dd>Até 3</dd><dt>Peças do Estúdio</dt><dd>150 por mês</dd><dt>Vídeos</dt><dd>30 por mês</dd></dl><a class="btn claro" href="#comecar" data-plano="premium">Assinar</a></div>
+    <div class="sobe plano-m"><h3>Enterprise</h3><p class="preco">Sob consulta</p><dl><dt>Para</dt><dd>Clínicas com vários médicos e equipe</dd></dl><a class="btn claro" href="#comecar" data-plano="enterprise">Conversar</a></div>
+  </div>
+  <p class="nota-planos">Todos os planos incluem agenda central, portal das clínicas parceiras, cadastro de pacientes, página com agendamento e o verificador de publicidade médica. Sem fidelidade: você cancela quando quiser e exporta seus dados. Quer ver antes? <a href="app/?demo=1">Abra a demonstração com dados fictícios</a>.</p>
+</section>
+
+<section class="sec wrap faq" aria-labelledby="t-faq">
+  <div>
+    <h2 id="t-faq">Perguntas frequentes</h2>
+    <ul role="tablist" aria-orientation="vertical" id="faq-lista"></ul>
+  </div>
+  <p class="painel" id="faq-painel" role="tabpanel" aria-live="polite"></p>
+</section>
+
+<section class="sec wrap final" id="comecar" aria-labelledby="t-final">
+  <h2 id="t-final" class="sr" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Assinar</h2>
+  <form id="f-final" class="sobe" novalidate>
+    <span style="white-space:nowrap">Meu e-mail:</span> <input id="f-email" aria-label="Seu e-mail" type="email" placeholder="voce@email.com" autocomplete="email" required> <button type="submit">começar</button>
+  </form>
+  <p class="depois sobe">Depois de enviar, você confirma o plano e segue para o pagamento seguro. O acesso chega no seu e-mail assim que o pagamento é aprovado.</p>
+  <div class="cadastro" id="cadastro">
+    <label class="inteiro">Seu nome, como na página<input id="f-nome" autocomplete="name" placeholder="Dra. Helena Duarte"></label>
+    <label>WhatsApp com DDD<input id="f-whats" type="tel" autocomplete="tel" placeholder="(85) 99999-0000"></label>
+    <label>Especialidade<input id="f-esp" placeholder="Clínica médica"></label>
+    <label>Plano<select id="f-plano"><option value="essencial">Essencial · R$ 497</option><option value="profissional" selected>Profissional · R$ 997</option><option value="premium">Premium · R$ 1.997</option><option value="enterprise">Enterprise · sob consulta</option></select></label>
+    <label>Você é<select id="f-tipo"><option value="individual">Médico</option><option value="clinica">Clínica</option></select></label>
+    <p class="msg" id="f-msg">Ao continuar, você concorda com os termos de uso e a política de privacidade.</p>
+    <div class="inteiro"><button class="btn" type="button" id="f-pagar">Ir para o pagamento</button></div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <span class="desc">Agenda e presença para médicos</span>
+  <span class="meio"><a href="app/">Entrar</a><a href="app/?demo=1">Demonstração</a><a href="mailto:contato@fluyan.com.br">Contato</a></span>
+  <span class="fim">2026 · <a href="#comecar">Privacidade</a></span>
+  <span class="creditos">Imagens: "Laennec stethoscope of 1819" e "The anatomy of the heart, engraving, 1686", Wellcome Collection, CC BY 4.0, via Wikimedia Commons. Fotografias de Todd Quackenbush e Matthew Wiebe (Unsplash).</span>
+</footer>
+
+<script src="app/js/config.js"></script>
+<script>
+(function () {
+  'use strict';
+  document.body.classList.remove('sem-js');
+  var reduz = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- a quinta na Clínica Vida (parte viva do herói) */
+  var MAX = 15, MIN = 8, horas = [], ocup = { 0: 'MS', 1: 'PR', 3: 'AC', 4: 'RC', 6: 'BL', 7: 'JP', 9: 'CR', 11: 'LM', 13: 'FD' };
+  for (var m = 8 * 60, k = 0; k < MAX; k++, m += 30) horas.push(('0' + Math.floor(m / 60)).slice(-2) + ':' + ('0' + m % 60).slice(-2));
+  var slots = document.getElementById('ag-slots');
+  slots.innerHTML = horas.map(function (h, n) {
+    return ocup[n] ? '<button class="slot ocupado" disabled aria-label="' + h + ' ocupado"><b>' + h + '</b><span>' + ocup[n] + '</span></button>'
+      : '<button class="slot livre" data-n="' + n + '" aria-label="Agendar às ' + h + '"><b>' + h + '</b><span>livre</span></button>';
+  }).join('');
+  function contar() {
+    var n = slots.querySelectorAll('.ocupado, .novo').length, chip = document.getElementById('ag-chip');
+    document.getElementById('ag-txt').textContent = n + ' de ' + MAX + ' consultas · mínimo ' + MIN;
+    document.getElementById('ag-barra').style.width = (n / MAX * 100) + '%';
+    if (n >= MAX) { chip.textContent = 'Lotado: a agenda fecha o dia'; chip.className = 'ui-chip ui-er'; slots.querySelectorAll('.livre').forEach(function (b) { b.disabled = true; }); }
+    else if (n < MIN) { chip.textContent = 'Abaixo do mínimo'; chip.className = 'ui-chip ui-al'; }
+    else { chip.textContent = 'Acima do mínimo · ' + (MAX - n) + ' vagas'; chip.className = 'ui-chip ui-ok'; }
+  }
+  slots.addEventListener('click', function (e) {
+    var b = e.target.closest('.livre'); if (!b || b.disabled) return;
+    b.classList.remove('livre'); b.classList.add('novo'); b.querySelector('span').textContent = 'novo'; b.setAttribute('aria-label', b.querySelector('b').textContent + ' agendado agora');
+    contar();
+  });
+  contar();
+
+  /* ---------- rolo do herói: avança com a rolagem, a frase fica */
+  var heroi = document.querySelector('.heroi'), trilho = document.getElementById('trilho'), leg = document.getElementById('legenda-quadro');
+  var LEG = ['A quinta na Clínica Vida: 15 vagas no máximo, 8 para valer a ida.', 'A recepção da clínica agenda direto, vendo só o próprio local.', 'O Estúdio prepara o carrossel com seu nome e seu registro.', 'O paciente agenda pela sua página, na mesma agenda.'];
+  var atual = -1;
+  function rolo() {
+    if (innerWidth <= 860) return;
+    var r = heroi.getBoundingClientRect(), total = heroi.offsetHeight - innerHeight, p = Math.min(1, Math.max(0, -r.top / total));
+    var i = Math.min(3, Math.floor(p * 4)), q = trilho.children[0], alt = q.offsetHeight + 24;
+    var topo = innerHeight * 0.30 - 4;
+    if (i !== atual) { atual = i; trilho.style.transform = 'translateY(' + (topo - i * alt) + 'px)'; leg.textContent = LEG[i]; }
+  }
+  addEventListener('scroll', rolo, { passive: true }); addEventListener('resize', function () { atual = -1; rolo(); }); rolo();
+
+  /* ---------- Estúdio: o pedido muda a peça */
+  var pedido = document.getElementById('pedido');
+  var REGRAS = [/garant|100\s?%|resultado certo|sem risco/i, /antes e depois/i, /o melhor|a melhor|n[uú]mero 1/i, /promo[cç][aã]o|desconto|imperd[ií]vel/i, /milagr|infal[ií]vel/i];
+  function estudio() {
+    var t = pedido.value.trim(), formato = /v[ií]deo|reels/i.test(t) ? 'vídeo · roteiro em 5 cenas · Reels' : (/stories/i.test(t) ? 'stories · 4 telas · Instagram' : (/post/i.test(t) ? 'post · 1 lâmina · Instagram' : 'carrossel · 6 lâminas · Instagram'));
+    var tema = t.replace(/^(crie|cria|fa[cç]a|quero|gere)\s+(um|uma)?\s*/i, '').replace(/^(carrossel|post|stories|v[ií]deo|roteiro)\s+(com|sobre|de)?\s*/i, '').split(/,|\.|\s+tom\s+/i)[0] || 'Seu tema';
+    tema = tema.charAt(0).toUpperCase() + tema.slice(1, 70);
+    ['es-titulo', 'es-capa'].forEach(function (id) { document.getElementById(id).textContent = tema; });
+    document.getElementById('es-sub').textContent = formato;
+    var al = REGRAS.some(function (r) { return r.test(t); }), box = document.getElementById('es-alerta');
+    box.className = 'ui-alerta' + (al ? ' ruim' : '');
+    box.querySelector('span').textContent = al ? 'Alerta de publicidade médica: promessa, superlativo ou apelo comercial. O Estúdio reescreve sem isso.' : 'Sem alertas de publicidade médica. Revise o conteúdo clínico antes de aprovar.';
+  }
+  pedido.addEventListener('input', estudio); estudio();
+
+  /* ---------- sua página: controles mudam a página fixa */
+  var pg = document.getElementById('pg-ui');
+  document.getElementById('ctl-nome').addEventListener('input', function () { var v = this.value.trim() || 'Seu nome'; document.getElementById('pg-nome').textContent = v; document.getElementById('pg-ini').textContent = v.replace(/^(dra?\.?)\s+/i, '').charAt(0).toUpperCase(); });
+  document.querySelectorAll('[data-cor]').forEach(function (b) { b.addEventListener('click', function () { pg.style.setProperty('--c', b.dataset.cor); document.querySelectorAll('[data-cor]').forEach(function (x) { x.setAttribute('aria-pressed', x === b); }); }); });
+  document.getElementById('ctl-preco').addEventListener('change', function () { document.getElementById('pg-preco').hidden = document.getElementById('pg-preco2').hidden = !this.checked; });
+  document.querySelectorAll('[data-mod]').forEach(function (b) { b.addEventListener('click', function () { document.getElementById('pg-tele').hidden = b.dataset.mod === 'pres'; document.querySelectorAll('[data-mod]').forEach(function (x) { x.setAttribute('aria-pressed', x === b); }); }); });
+  document.querySelectorAll('[data-cta]').forEach(function (b) { b.addEventListener('click', function () { document.getElementById('pg-cta').textContent = b.dataset.cta; document.querySelectorAll('[data-cta]').forEach(function (x) { x.setAttribute('aria-pressed', x === b); }); }); });
+
+  /* ---------- perguntas */
+  var FAQ = [
+    ['Atende médico individual e clínica?', 'Sim. O médico assina para si; a clínica reúne vários médicos, cada um com agenda e página próprias, e uma equipe com acessos separados.'],
+    ['A clínica parceira vê meus pacientes?', 'Só os que ela mesma agendou, com nome e contato. Prontuário, financeiro e pacientes de outros locais ficam fora do acesso dela.'],
+    ['O Estúdio segue as regras do CFM?', 'Ele evita promessa de resultado, antes e depois, superlativos e depoimentos. Um verificador revisa cada texto, e nada vai ao ar sem a sua aprovação.'],
+    ['Preciso do Canva ou do CapCut pagos?', 'Não. As peças abrem com texto editável no Canva gratuito, e os vídeos saem como projeto do CapCut para computador, com legendas editáveis.'],
+    ['Dados de pacientes vão para a inteligência artificial?', 'Não. O Estúdio recebe só o seu perfil profissional e o pedido que você escreve. Nenhum dado de paciente entra na criação de conteúdo.'],
+    ['Tem prontuário eletrônico?', 'Ainda não. Prontuário exige infraestrutura própria e entra numa etapa futura. Hoje o Fluyan cuida da agenda, do cadastro, da página e do conteúdo.'],
+    ['Tem fidelidade ou teste grátis?', 'Sem fidelidade: cancele quando quiser e exporte seus dados. Não há teste grátis, mas a demonstração com dados fictícios mostra o sistema inteiro.'],
+    ['Funciona com convênio?', 'Sim. O Fluyan organiza a agenda de atendimentos particulares e por convênio. A cobrança dos pacientes continua do seu jeito.']
+  ];
+
+  var lista = document.getElementById('faq-lista'), painel = document.getElementById('faq-painel');
+  lista.innerHTML = FAQ.map(function (f, n) { return '<li class="sobe"><button class="q" role="tab" id="faq-' + n + '" aria-selected="' + (n === 0) + '" aria-controls="faq-painel">' + f[0] + '</button><p class="resp-movel' + (n === 0 ? ' aberta' : '') + '">' + f[1] + '</p></li>'; }).join('');
+  function escolher(n) {
+    lista.querySelectorAll('.q').forEach(function (q, i) { q.setAttribute('aria-selected', i === n); });
+    lista.querySelectorAll('.resp-movel').forEach(function (r, i) { r.classList.toggle('aberta', i === n); });
+    painel.style.opacity = 0; setTimeout(function () { painel.textContent = FAQ[n][1]; painel.setAttribute('aria-labelledby', 'faq-' + n); painel.style.opacity = 1; }, reduz ? 0 : 150);
+  }
+  lista.querySelectorAll('.q').forEach(function (q, n) { q.addEventListener('click', function () { escolher(n); }); q.addEventListener('mouseenter', function () { if (innerWidth > 860) escolher(n); }); q.addEventListener('focus', function () { escolher(n); }); });
+  painel.textContent = FAQ[0][1];
+
+  /* ---------- assinatura */
+  document.querySelectorAll('[data-plano]').forEach(function (a) { a.addEventListener('click', function () { document.getElementById('f-plano').value = a.dataset.plano; }); });
+  document.getElementById('f-final').addEventListener('submit', function (e) {
+    e.preventDefault(); var em = document.getElementById('f-email');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em.value)) { em.focus(); em.setCustomValidity('Informe um e-mail válido.'); em.reportValidity(); return; }
+    em.setCustomValidity(''); document.getElementById('cadastro').classList.add('aberto'); document.getElementById('f-nome').focus();
+  });
+  document.getElementById('f-pagar').addEventListener('click', function () {
+    var b = this, msg = document.getElementById('f-msg'), API = (window.FLUYAN_CONFIG || {}).API_URL;
+    var d = { email: document.getElementById('f-email').value, nome: document.getElementById('f-nome').value, whatsapp: document.getElementById('f-whats').value,
+      especialidade: document.getElementById('f-esp').value, plano: document.getElementById('f-plano').value, tipo: document.getElementById('f-tipo').value };
+    if (d.nome.trim().length < 3) { msg.textContent = 'Informe seu nome.'; return; }
+    if (d.plano === 'enterprise' || !API) {
+      location.href = 'mailto:contato@fluyan.com.br?subject=' + encodeURIComponent('Quero assinar o Fluyan (' + d.plano + ')') + '&body=' + encodeURIComponent('Nome: ' + d.nome + '\nE-mail: ' + d.email + '\nWhatsApp: ' + d.whatsapp + '\nEspecialidade: ' + d.especialidade + '\nPlano: ' + d.plano + '\nTipo: ' + d.tipo);
+      msg.textContent = 'Abrimos seu e-mail com os dados preenchidos. É só enviar.'; return;
+    }
+    b.disabled = true; msg.textContent = 'Preparando o pagamento...';
+    fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ acao: 'assinar', dados: d }) }).then(function (r) { return r.json(); })
+      .then(function (r) { if (r.ok) location.href = r.dados.link; else { msg.textContent = r.erro; b.disabled = false; } })
+      .catch(function () { msg.textContent = 'Sem conexão agora. Tente de novo em instantes.'; b.disabled = false; });
+  });
+
+  /* ---------- entradas ao rolar */
+  if (reduz || !('IntersectionObserver' in window)) { document.querySelectorAll('.sobe').forEach(function (x) { x.classList.add('visto'); }); }
+  else {
+    var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (!e.isIntersecting) return; var irmaos = [].slice.call(e.target.parentNode.querySelectorAll(':scope > .sobe')); e.target.style.transitionDelay = (Math.max(0, irmaos.indexOf(e.target)) * 75) + 'ms'; e.target.classList.add('visto'); io.unobserve(e.target); }); }, { threshold: .15 });
+    document.querySelectorAll('.sobe').forEach(function (x) { io.observe(x); });
+    var grav = document.getElementById('gravura');
+    addEventListener('scroll', function () { var r = grav.getBoundingClientRect(); if (r.bottom < 0 || r.top > innerHeight) return; var p = 1 - (r.top + r.height) / (innerHeight + r.height); grav.style.transform = 'scale(' + (1.12 - p * .08) + ') translateY(' + (p * -24) + 'px)'; }, { passive: true });
+  }
+})();
+</script>
+</body>
+</html>

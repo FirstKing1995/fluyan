@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fluyan Identidade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tokens.css">
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--mf-perola); color: var(--mf-tinta); font: 15px/1.55 var(--mf-fonte); -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 16px; }
+  h1, h2, h3 { font-family: var(--mf-fonte-titulo); font-weight: 500; letter-spacing: -.01em; margin: 0; }
+  .rotulo { font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--mf-petroleo-2); }
+  section { padding: 56px 0; border-top: 1px solid var(--mf-linha); }
+  section > .wrap > h2 { font-size: clamp(26px, 3.2vw, 36px); margin: 8px 0 28px; }
+  i[data-lucide] { width: 18px; height: 18px; stroke-width: 1.75; }
+
+  /* capa */
+  .capa { padding: 72px 0 64px; }
+  .marca { display: flex; align-items: center; gap: 14px; }
+  .marca .nome { font-family: var(--mf-fonte-titulo); font-size: 30px; font-weight: 500; letter-spacing: -.02em; }
+  .marca .nome b { font-weight: 600; color: var(--mf-petroleo); }
+  .capa h1 { font-size: clamp(38px, 6vw, 68px); line-height: 1.04; max-width: 15ch; margin: 36px 0 18px; }
+  .capa h1 em { font-style: italic; color: var(--mf-petroleo); }
+  .capa p { max-width: 58ch; color: var(--mf-texto-2); font-size: 17px; margin: 0; }
+  .principios { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 40px; }
+  .principios div { background: var(--mf-superficie); border: 1px solid var(--mf-linha); border-radius: var(--mf-raio); padding: 18px; }
+  .principios b { display: block; font-weight: 600; margin: 10px 0 2px; }
+  .principios span { color: var(--mf-texto-2); font-size: 14px; }
+  .principios i { color: var(--mf-petroleo); }
+
+  /* logo */
+  .logos { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 14px; }
+  .placa { border-radius: var(--mf-raio-g); padding: 36px; display: flex; align-items: center; justify-content: center; min-height: 200px; border: 1px solid var(--mf-linha); background: var(--mf-superficie); }
+  .placa.escura { background: var(--mf-noite); border-color: transparent; }
+  .placa.escura .nome { color: #F6F5F1; }
+  .placa.escura .nome b { color: var(--mf-salvia); }
+  .placa.salvia { background: var(--mf-salvia-suave); border-color: transparent; }
+
+  /* paleta */
+  .paleta { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+  .cor { border-radius: var(--mf-raio); overflow: hidden; background: var(--mf-superficie); border: 1px solid var(--mf-linha); }
+  .cor .am { height: 96px; }
+  .cor div:last-child { padding: 12px 14px; font-size: 13px; }
+  .cor b { display: block; font-weight: 600; font-size: 14px; }
+  .cor code { color: var(--mf-texto-3); font-size: 12px; }
+
+  /* tipografia */
+  .tipos { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .tipos > div { background: var(--mf-superficie); border: 1px solid var(--mf-linha); border-radius: var(--mf-raio-g); padding: 28px; }
+  .amostra-t { font-family: var(--mf-fonte-titulo); font-size: 56px; line-height: 1; margin: 12px 0; }
+  .amostra-s { font-size: 40px; font-weight: 600; line-height: 1; margin: 12px 0; letter-spacing: -.02em; }
+  .escala p { margin: 6px 0; }
+
+  /* componentes */
+  .comp { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .cartao { background: var(--mf-superficie); border: 1px solid var(--mf-linha); border-radius: var(--mf-raio); padding: 20px; box-shadow: var(--mf-sombra-1); }
+  .cartao h3 { font-family: var(--mf-fonte); font-size: 14px; font-weight: 600; color: var(--mf-texto-2); margin-bottom: 14px; }
+  .linha-c { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; height: 42px; padding: 0 18px; border-radius: var(--mf-pilula); border: 1px solid transparent; font: 600 14px var(--mf-fonte); cursor: pointer; transition: transform var(--mf-rapido) var(--mf-ease), background var(--mf-rapido); }
+  .btn:active { transform: scale(.97); }
+  .btn-p { background: var(--mf-petroleo); color: #fff; }
+  .btn-p:hover { background: var(--mf-petroleo-2); }
+  .btn-s { background: var(--mf-superficie); color: var(--mf-tinta); border-color: var(--mf-linha); }
+  .btn-g { background: transparent; color: var(--mf-petroleo); padding: 0 10px; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 12px; border-radius: var(--mf-pilula); font-size: 12.5px; font-weight: 600; }
+  .chip::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .c-ok { background: var(--mf-ok-suave); color: var(--mf-ok); }
+  .c-al { background: var(--mf-alerta-suave); color: var(--mf-alerta); }
+  .c-er { background: var(--mf-erro-suave); color: var(--mf-erro); }
+  .c-in { background: var(--mf-info-suave); color: var(--mf-info); }
+  .c-ne { background: var(--mf-perola); color: var(--mf-texto-2); }
+  .campo { display: block; margin-bottom: 12px; }
+  .campo span { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+  .campo input { width: 100%; height: 44px; border-radius: var(--mf-raio-p); border: 1px solid var(--mf-linha); background: var(--mf-perola); padding: 0 14px; font: 15px var(--mf-fonte); color: var(--mf-tinta); outline: none; transition: border-color var(--mf-rapido), box-shadow var(--mf-rapido); }
+  .campo input:focus { border-color: var(--mf-petroleo-2); box-shadow: 0 0 0 4px var(--mf-salvia-suave); background: var(--mf-superficie); }
+
+  /* mock do painel */
+  .telas { display: grid; grid-template-columns: 1fr 340px; gap: 24px; align-items: start; }
+  .app { background: var(--mf-superficie); border-radius: var(--mf-raio-g); box-shadow: var(--mf-sombra-3); overflow: hidden; display: grid; grid-template-columns: 210px 1fr; min-height: 560px; border: 1px solid var(--mf-linha); }
+  .lateral { background: var(--mf-noite); color: #CFDAD8; padding: 20px 14px; display: flex; flex-direction: column; gap: 4px; }
+  .lateral .marca { margin: 2px 6px 22px; }
+  .lateral .nome { font-size: 21px; color: #F6F5F1; }
+  .lateral .nome b { color: var(--mf-salvia); }
+  .lateral a { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 12px; font-size: 14px; color: inherit; text-decoration: none; }
+  .lateral a.ativo { background: rgba(140, 199, 181, .14); color: #fff; }
+  .lateral .grupo { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: #6F8584; margin: 16px 12px 4px; }
+  .area { background: var(--mf-perola); padding: 24px; }
+  .topo { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 12px; }
+  .topo h2 { font-size: 26px; }
+  .topo small { display: block; color: var(--mf-texto-2); font-size: 13.5px; }
+  .kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 14px; }
+  .kpi { background: var(--mf-superficie); border-radius: var(--mf-raio); padding: 16px; border: 1px solid var(--mf-linha); }
+  .kpi small { color: var(--mf-texto-2); font-size: 12.5px; }
+  .kpi b { display: block; font-family: var(--mf-fonte-titulo); font-weight: 500; font-size: 30px; line-height: 1.15; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .barra { height: 8px; border-radius: 99px; background: var(--mf-perola); margin-top: 10px; position: relative; overflow: hidden; }
+  .barra i { position: absolute; inset: 0 auto 0 0; border-radius: 99px; background: var(--mf-petroleo-2); }
+  .barra .min { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--mf-champanhe); }
+  .duas { display: grid; grid-template-columns: 1.1fr 1fr; gap: 12px; }
+  .lista { list-style: none; margin: 0; padding: 0; }
+  .lista li { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid var(--mf-linha); font-size: 14px; }
+  .lista li:first-child { border-top: 0; }
+  .hora { font-variant-numeric: tabular-nums; font-weight: 600; width: 44px; color: var(--mf-petroleo); }
+  .lista .meio { flex: 1; min-width: 0; }
+  .lista .meio small { display: block; color: var(--mf-texto-3); font-size: 12.5px; }
+  .peca { border: 1px solid var(--mf-linha); border-radius: 14px; padding: 14px; background: var(--mf-perola); }
+  .peca p { margin: 6px 0 12px; font-size: 13.5px; color: var(--mf-texto-2); }
+  .exportar { display: flex; gap: 6px; flex-wrap: wrap; }
+  .exportar button { height: 32px; padding: 0 12px; font-size: 12.5px; border-radius: 99px; border: 1px solid var(--mf-linha); background: var(--mf-superficie); display: inline-flex; gap: 6px; align-items: center; font-family: var(--mf-fonte); font-weight: 600; color: var(--mf-tinta); cursor: pointer; }
+  .exportar button i { width: 15px; height: 15px; color: var(--mf-petroleo); }
+
+  /* celular */
+  .celular { background: var(--mf-noite); border-radius: 40px; padding: 10px; box-shadow: var(--mf-sombra-3); }
+  .tela { background: var(--mf-perola); border-radius: 32px; overflow: hidden; height: 680px; }
+  .heroi { background: linear-gradient(160deg, var(--mf-salvia-suave), var(--mf-perola) 70%); padding: 30px 22px 22px; }
+  .foto { width: 76px; height: 76px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #D9E7E3, #9DBDB5); border: 3px solid #fff; box-shadow: var(--mf-sombra-2); display: grid; place-items: center; color: var(--mf-petroleo); }
+  .foto i { width: 30px; height: 30px; }
+  .heroi h3 { font-size: 26px; margin: 16px 0 2px; }
+  .heroi small { color: var(--mf-texto-2); font-size: 13px; }
+  .selo { display: inline-flex; gap: 6px; align-items: center; font-size: 12px; font-weight: 600; color: var(--mf-petroleo); background: var(--mf-superficie); border-radius: 99px; padding: 5px 10px; margin-top: 12px; border: 1px solid var(--mf-linha); }
+  .selo i { width: 14px; height: 14px; }
+  .bloco { padding: 18px 22px; }
+  .bloco .rotulo { font-size: 11px; }
+  .dias { display: flex; gap: 8px; margin: 12px 0; }
+  .dias div { flex: 1; text-align: center; border-radius: 14px; padding: 8px 0; background: var(--mf-superficie); border: 1px solid var(--mf-linha); font-size: 12px; color: var(--mf-texto-2); }
+  .dias div b { display: block; font-size: 17px; color: var(--mf-tinta); }
+  .dias div.on { background: var(--mf-petroleo); border-color: transparent; color: #CFE6E1; }
+  .dias div.on b { color: #fff; }
+  .horas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .horas span { text-align: center; padding: 9px 0; border-radius: 12px; background: var(--mf-superficie); border: 1px solid var(--mf-linha); font-size: 13.5px; font-weight: 600; }
+  .horas span.on { border-color: var(--mf-petroleo-2); color: var(--mf-petroleo); box-shadow: 0 0 0 3px var(--mf-salvia-suave); }
+  .tela .btn { width: 100%; justify-content: center; margin-top: 14px; height: 48px; }
+  .servico { display: flex; justify-content: space-between; align-items: center; background: var(--mf-superficie); border: 1px solid var(--mf-linha); border-radius: 14px; padding: 12px 14px; margin-top: 10px; font-size: 14px; }
+  .servico small { display: block; color: var(--mf-texto-3); font-size: 12px; }
+
+  .area { min-width: 0; container-type: inline-size; }
+  @container (max-width: 640px) {
+    .kpis { grid-template-columns: 1fr 1fr; }
+    .kpis .kpi:last-child { grid-column: span 2; }
+    .duas { grid-template-columns: 1fr; }
+  }
+  .nota { color: var(--mf-texto-2); font-size: 14px; max-width: 70ch; }
+  footer { padding: 40px 0 64px; color: var(--mf-texto-3); font-size: 13px; border-top: 1px solid var(--mf-linha); }
+
+  @media (max-width: 1100px) {
+    .telas { grid-template-columns: 1fr; }
+    .celular { max-width: 340px; width: 100%; margin: 0 auto; }
+  }
+  @media (max-width: 980px) {
+    .app { grid-template-columns: 1fr; }
+    .lateral { display: none; }
+    .comp, .logos { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 680px) {
+    .principios, .tipos, .kpis, .duas { grid-template-columns: 1fr; }
+    .amostra-t { font-size: 44px; }
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="simbolo" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="15" fill="currentColor"/>
+    <path d="M24 13v22M13 24h6.5c4.2 0 5.6-6 9.8-6H35" fill="none" stroke="#fff" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+</svg>
+
+<header class="capa">
+  <div class="wrap">
+    <button class="btn btn-s" id="tema" style="float:right;height:38px"><i data-lucide="moon"></i>Modo escuro</button>
+    <div class="marca">
+      <svg width="46" height="46" style="color:var(--mf-petroleo)"><use href="#simbolo"/></svg>
+      <span class="nome">Fluyan</span>
+    </div>
+    <h1>Cuidado clínico com <em>presença</em> e organização.</h1>
+    <p>Proposta de identidade visual para o Fluyan. O mercado médico confia em marcas calmas, claras e precisas. A direção aqui une a seriedade de uma clínica de alto padrão com a leveza de um produto digital moderno.</p>
+    <div class="principios">
+      <div><i data-lucide="leaf"></i><b>Calma</b><span>Petróleo e sálvia no lugar do azul hospitalar saturado.</span></div>
+      <div><i data-lucide="circle-dashed"></i><b>Arredondada</b><span>Cantos de 10 a 24 px, botões em pílula, nada de quinas.</span></div>
+      <div><i data-lucide="gem"></i><b>Sofisticada</b><span>Serifa editorial nos títulos e champanhe em detalhes.</span></div>
+      <div><i data-lucide="eye"></i><b>Legível</b><span>Contraste alto, números tabulares, mobile primeiro.</span></div>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <span class="rotulo">Marca</span>
+    <h2>Símbolo e assinatura</h2>
+    <div class="logos">
+      <div class="placa"><div class="marca"><svg width="58" height="58" style="color:var(--mf-petroleo)"><use href="#simbolo"/></svg><span class="nome" style="font-size:38px">Fluyan</span></div></div>
+      <div class="placa escura"><div class="marca"><svg width="46" height="46" style="color:var(--mf-petroleo-2)"><use href="#simbolo"/></svg><span class="nome">Fluyan</span></div></div>
+      <div class="placa salvia"><svg width="88" height="88" style="color:var(--mf-petroleo)"><use href="#simbolo"/></svg></div>
+    </div>
+    <p class="nota" style="margin-top:16px">A cruz da saúde se abre em uma curva que segue em frente: o cuidado que continua da agenda ao relacionamento. Fluyan vem de fluir: o cuidado que segue do agendamento ao relacionamento.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="rotulo">Cores</span>
+    <h2>Paleta</h2>
+    <div class="paleta">
+      <div class="cor"><div class="am" style="background:#0F5257"></div><div><b>Petróleo</b><code>#0F5257 · primária</code></div></div>
+      <div class="cor"><div class="am" style="background:#1D7874"></div><div><b>Petróleo claro</b><code>#1D7874 · hover, gráficos</code></div></div>
+      <div class="cor"><div class="am" style="background:#10262E"></div><div><b>Tinta</b><code>#10262E · texto, menu</code></div></div>
+      <div class="cor"><div class="am" style="background:#8CC7B5"></div><div><b>Sálvia</b><code>#8CC7B5 · acento</code></div></div>
+      <div class="cor"><div class="am" style="background:#E4F1EC"></div><div><b>Sálvia suave</b><code>#E4F1EC · destaques</code></div></div>
+      <div class="cor"><div class="am" style="background:#C8A96A"></div><div><b>Champanhe</b><code>#C8A96A · uso pontual</code></div></div>
+      <div class="cor"><div class="am" style="background:#F6F5F1"></div><div><b>Pérola</b><code>#F6F5F1 · fundo</code></div></div>
+      <div class="cor"><div class="am" style="background:#E6E3DC"></div><div><b>Linha</b><code>#E6E3DC · bordas</code></div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="rotulo">Tipografia</span>
+    <h2>Duas famílias, papéis claros</h2>
+    <div class="tipos">
+      <div>
+        <small class="rotulo">Títulos</small>
+        <div class="amostra-t">Fraunces</div>
+        <p class="nota">Serifa editorial de traço suave. Dá autoridade sem frieza. Usada em títulos, números de destaque e na marca.</p>
+      </div>
+      <div>
+        <small class="rotulo">Interface e texto</small>
+        <div class="amostra-s">Plus Jakarta Sans</div>
+        <div class="escala">
+          <p style="font-size:17px;font-weight:600">Agenda de quinta-feira · Clínica Vida</p>
+          <p style="font-size:15px;color:var(--mf-texto-2)">Corpo de texto em 15 px com altura de linha confortável para leitura no celular.</p>
+          <p style="font-size:12.5px;color:var(--mf-texto-3)">Legendas e metadados em 12,5 px</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="rotulo">Componentes</span>
+    <h2>Peças da interface</h2>
+    <div class="comp">
+      <div class="cartao">
+        <h3>Botões</h3>
+        <div class="linha-c">
+          <button class="btn btn-p"><i data-lucide="calendar-plus"></i>Agendar</button>
+          <button class="btn btn-s">Salvar rascunho</button>
+          <button class="btn btn-g">Cancelar</button>
+        </div>
+      </div>
+      <div class="cartao">
+        <h3>Estados</h3>
+        <div class="linha-c">
+          <span class="chip c-ok">Confirmado</span>
+          <span class="chip c-al">Pendente</span>
+          <span class="chip c-er">Não compareceu</span>
+          <span class="chip c-in">Em revisão</span>
+          <span class="chip c-ne">Rascunho</span>
+        </div>
+      </div>
+      <div class="cartao">
+        <h3>Campos</h3>
+        <label class="campo"><span>Nome profissional</span><input value="Dra. Helena Duarte"></label>
+        <label class="campo" style="margin:0"><span>CRM / UF</span><input placeholder="000000 / CE"></label>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="rotulo">Aplicação</span>
+    <h2>Painel do médico e página pública</h2>
+    <div class="telas">
+      <div class="app">
+        <nav class="lateral">
+          <div class="marca"><svg width="32" height="32" style="color:var(--mf-petroleo-2)"><use href="#simbolo"/></svg><span class="nome">Fluyan</span></div>
+          <a class="ativo" href="#"><i data-lucide="layout-dashboard"></i>Início</a>
+          <a href="#"><i data-lucide="calendar-days"></i>Agenda</a>
+          <a href="#"><i data-lucide="users-round"></i>Pacientes</a>
+          <a href="#"><i data-lucide="building-2"></i>Clínicas</a>
+          <a href="#"><i data-lucide="stethoscope"></i>Serviços e planos</a>
+          <span class="grupo">Presença</span>
+          <a href="#"><i data-lucide="sparkles"></i>Assistente</a>
+          <a href="#"><i data-lucide="calendar-range"></i>Conteúdo</a>
+          <a href="#"><i data-lucide="panels-top-left"></i>Minhas páginas</a>
+        </nav>
+        <div class="area">
+          <div class="topo">
+            <div><h2>Bom dia, Dra. Helena</h2><small>Quinta-feira, 5 de novembro · 3 locais de atendimento</small></div>
+            <button class="btn btn-p"><i data-lucide="plus"></i>Novo</button>
+          </div>
+          <div class="kpis">
+            <div class="kpi"><small>Consultas hoje</small><b>11</b></div>
+            <div class="kpi"><small>Clínica Vida · ocupação</small><b>9 / 15</b><div class="barra"><i style="width:60%"></i><span class="min" style="left:53%"></span></div></div>
+            <div class="kpi"><small>Conteúdos para revisar</small><b>4</b></div>
+          </div>
+          <div class="duas">
+            <div class="cartao">
+              <h3>Próximos atendimentos</h3>
+              <ul class="lista">
+                <li><span class="hora">08:00</span><span class="meio">Mariana S.<small>Consulta de rotina · Clínica Vida</small></span><span class="chip c-ok">Confirmado</span></li>
+                <li><span class="hora">08:40</span><span class="meio">Paulo R.<small>Retorno · Teleconsulta</small></span><span class="chip c-al">Pendente</span></li>
+                <li><span class="hora">09:20</span><span class="meio">Ana Clara M.<small>Primeira consulta · Consultório</small></span><span class="chip c-ok">Confirmado</span></li>
+              </ul>
+            </div>
+            <div class="cartao">
+              <h3>Conteúdo em revisão</h3>
+              <div class="peca">
+                <span class="chip c-in">Carrossel · Instagram</span>
+                <p>5 sinais de que é hora de fazer o check-up anual. Rascunho gerado do seu vídeo de 3 minutos.</p>
+                <div class="exportar">
+                  <button><i data-lucide="file-text"></i>DOCX</button>
+                  <button><i data-lucide="image"></i>Canva</button>
+                  <button><i data-lucide="clapperboard"></i>CapCut</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="celular">
+        <div class="tela">
+          <div class="heroi">
+            <div class="foto"><i data-lucide="user-round"></i></div>
+            <h3>Dra. Helena Duarte</h3>
+            <small>Clínica médica · CRM 000000 CE</small><br>
+            <span class="selo"><i data-lucide="badge-check"></i>Perfil verificado</span>
+          </div>
+          <div class="bloco">
+            <span class="rotulo">Agende sua consulta</span>
+            <div class="servico"><span>Consulta presencial<small>40 min · Clínica Vida</small></span><i data-lucide="chevron-right"></i></div>
+            <div class="dias">
+              <div>qua<b>4</b></div><div class="on">qui<b>5</b></div><div>sex<b>6</b></div><div>seg<b>9</b></div>
+            </div>
+            <div class="horas"><span>10:00</span><span class="on">10:40</span><span>11:20</span><span>14:00</span><span>14:40</span><span>15:20</span></div>
+            <button class="btn btn-p"><i data-lucide="calendar-check"></i>Confirmar horário</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer><div class="wrap">Fluyan · proposta de identidade v0.1 · novembro de 2026 · ícones Lucide (ISC) · fontes Google Fonts (OFL)</div></footer>
+
+<script>
+  lucide.createIcons();
+  document.getElementById('tema').addEventListener('click', function () {
+    var h = document.documentElement, esc = h.dataset.theme !== 'dark';
+    h.dataset.theme = esc ? 'dark' : 'light';
+    this.lastChild.textContent = esc ? 'Modo claro' : 'Modo escuro';
+  });
+</script>
+</body>
+</html>

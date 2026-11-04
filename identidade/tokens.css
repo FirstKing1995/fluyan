@@ -1,0 +1,63 @@
+/* ==========================================================================
+   MEDFLOW — tokens da identidade visual (base de todo o sistema)
+   Direção: clínica de alto padrão. Clara, calma, arredondada, sofisticada.
+   ========================================================================== */
+:root {
+  /* Cores de marca */
+  --mf-tinta: #10262E;          /* texto principal */
+  --mf-noite: #10262E;          /* painéis escuros (fixo nos dois temas) */
+  --mf-petroleo: #0F5257;       /* cor primária */
+  --mf-petroleo-2: #1D7874;     /* primária clara, hover, gráficos */
+  --mf-salvia: #8CC7B5;         /* acento calmo */
+  --mf-salvia-suave: #E4F1EC;   /* fundos de destaque, chips */
+  --mf-champanhe: #C8A96A;      /* detalhe premium, uso pontual */
+  --mf-champanhe-suave: #F5EEDF;
+
+  /* Neutros quentes */
+  --mf-perola: #F6F5F1;         /* fundo da aplicação */
+  --mf-superficie: #FFFFFF;     /* cartões */
+  --mf-linha: #E6E3DC;          /* bordas */
+  --mf-texto-2: #4E5F64;        /* texto secundário */
+  --mf-texto-3: #84918F;        /* legendas, placeholders */
+
+  /* Estados */
+  --mf-ok: #2F8F6B;     --mf-ok-suave: #E3F3EC;
+  --mf-alerta: #B7832B; --mf-alerta-suave: #FAF0DC;
+  --mf-erro: #C2554D;   --mf-erro-suave: #F8E6E4;
+  --mf-info: #3E6FA8;   --mf-info-suave: #E5EDF7;
+
+  /* Tipografia */
+  --mf-fonte-titulo: 'Fraunces', Georgia, serif;
+  --mf-fonte: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Forma */
+  --mf-raio-p: 10px;   /* campos, botões pequenos */
+  --mf-raio: 16px;     /* cartões */
+  --mf-raio-g: 24px;   /* painéis grandes, modais */
+  --mf-pilula: 999px;
+
+  /* Profundidade (sombras longas e leves) */
+  --mf-sombra-1: 0 1px 2px rgba(16, 38, 46, .05), 0 1px 1px rgba(16, 38, 46, .03);
+  --mf-sombra-2: 0 8px 24px -10px rgba(16, 38, 46, .14), 0 2px 6px rgba(16, 38, 46, .04);
+  --mf-sombra-3: 0 24px 60px -24px rgba(16, 38, 46, .28);
+
+  /* Movimento */
+  --mf-ease: cubic-bezier(.22, .8, .24, 1);
+  --mf-rapido: 160ms;
+  --mf-medio: 260ms;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --mf-tinta: #E8EEEC; --mf-noite: #081317; --mf-perola: #0D1A1E; --mf-superficie: #13252A; --mf-linha: #23393F;
+    --mf-texto-2: #A9B8B6; --mf-texto-3: #78898A; --mf-petroleo: #3FA39C; --mf-petroleo-2: #63BDB4;
+    --mf-salvia-suave: #183A37; --mf-champanhe-suave: #2E2A1F;
+    --mf-ok-suave: #16342A; --mf-alerta-suave: #362C17; --mf-erro-suave: #3A1E1C; --mf-info-suave: #18283C;
+  }
+}
+:root[data-theme="dark"] {
+  --mf-tinta: #E8EEEC; --mf-noite: #081317; --mf-perola: #0D1A1E; --mf-superficie: #13252A; --mf-linha: #23393F;
+  --mf-texto-2: #A9B8B6; --mf-texto-3: #78898A; --mf-petroleo: #3FA39C; --mf-petroleo-2: #63BDB4;
+  --mf-salvia-suave: #183A37; --mf-champanhe-suave: #2E2A1F;
+  --mf-ok-suave: #16342A; --mf-alerta-suave: #362C17; --mf-erro-suave: #3A1E1C; --mf-info-suave: #18283C;
+}

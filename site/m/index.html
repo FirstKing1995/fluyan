@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Agende sua consulta</title>
+<meta name="description" content="Página profissional com agendamento online.">
+<link rel="icon" href="../assets/icone.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/tokens.css">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--mf-perola); color: var(--mf-tinta); font: 16px/1.6 var(--mf-fonte); -webkit-font-smoothing: antialiased; --cor: var(--mf-petroleo); }
+  h1, h2, h3 { font-family: var(--mf-fonte-titulo); font-weight: 500; letter-spacing: -.01em; margin: 0; }
+  svg.lucide { width: 18px; height: 18px; stroke-width: 1.75; flex: none; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 16px; }
+  .capa { background: linear-gradient(165deg, color-mix(in srgb, var(--cor) 16%, var(--mf-perola)), var(--mf-perola) 72%); padding: 56px 0 36px; }
+  .foto { width: 104px; height: 104px; border-radius: 50%; border: 4px solid #fff; box-shadow: var(--mf-sombra-2); object-fit: cover; background: color-mix(in srgb, var(--cor) 22%, #fff); display: grid; place-items: center; font: 600 34px var(--mf-fonte-titulo); color: var(--cor); }
+  .capa h1 { font-size: clamp(32px, 6vw, 46px); line-height: 1.1; margin: 22px 0 6px; }
+  .capa .esp { color: var(--mf-texto-2); }
+  .capa p.intro { max-width: 56ch; color: var(--mf-texto-2); margin: 14px 0 0; }
+  .selo { display: inline-flex; gap: 6px; align-items: center; font-size: 13px; font-weight: 600; color: var(--cor); background: var(--mf-superficie); border: 1px solid var(--mf-linha); border-radius: 99px; padding: 5px 12px; margin-top: 14px; }
+  .acoes { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 22px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 22px; border-radius: 99px; border: 1px solid transparent; font: 600 15px var(--mf-fonte); cursor: pointer; text-decoration: none; transition: transform var(--mf-rapido) var(--mf-ease), filter var(--mf-rapido); }
+  .btn:active { transform: scale(.97); }
+  .btn:disabled { opacity: .5; cursor: default; }
+  .btn-p { background: var(--cor); color: #fff; }
+  .btn-p:hover:not(:disabled) { filter: brightness(1.08); }
+  .btn-s { background: var(--mf-superficie); color: var(--mf-tinta); border-color: var(--mf-linha); }
+  section.bloco { padding: 40px 0; border-top: 1px solid var(--mf-linha); }
+  section.bloco h2 { font-size: clamp(24px, 4vw, 30px); margin-bottom: 18px; }
+  .texto { white-space: pre-line; color: var(--mf-texto-2); }
+  .cartoes { display: grid; gap: 12px; }
+  .cartao { background: var(--mf-superficie); border: 1px solid var(--mf-linha); border-radius: var(--mf-raio); padding: 18px 20px; }
+  .cartao h3 { font-family: var(--mf-fonte); font-size: 16px; font-weight: 600; }
+  .cartao small { color: var(--mf-texto-3); }
+  .cartao p { margin: 6px 0 0; color: var(--mf-texto-2); font-size: 15px; }
+  .ag { background: var(--mf-superficie); border: 1px solid var(--mf-linha); border-radius: var(--mf-raio-g); padding: 22px; box-shadow: var(--mf-sombra-2); }
+  .passo { margin-bottom: 18px; }
+  .passo > b { display: block; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: var(--mf-texto-3); margin-bottom: 10px; }
+  .opcoes { display: flex; flex-wrap: wrap; gap: 8px; }
+  .opcao { border: 1px solid var(--mf-linha); background: var(--mf-superficie); border-radius: 14px; padding: 10px 14px; cursor: pointer; font: 600 14px var(--mf-fonte); color: var(--mf-tinta); text-align: left; transition: border-color var(--mf-rapido), box-shadow var(--mf-rapido); }
+  .opcao small { display: block; font-weight: 500; color: var(--mf-texto-3); font-size: 12px; }
+  .opcao.on { border-color: var(--cor); box-shadow: 0 0 0 3px color-mix(in srgb, var(--cor) 18%, transparent); color: var(--cor); }
+  .dias { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; }
+  .dias .opcao { min-width: 74px; text-align: center; flex: none; }
+  .dias .opcao b { display: block; font-size: 20px; }
+  .horas { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 8px; }
+  .horas .opcao { text-align: center; font-variant-numeric: tabular-nums; }
+  label.campo { display: block; margin-bottom: 12px; }
+  label.campo span { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+  label.campo input { width: 100%; height: 48px; border-radius: 12px; border: 1px solid var(--mf-linha); background: var(--mf-perola); padding: 0 14px; font: 16px var(--mf-fonte); color: var(--mf-tinta); }
+  label.campo input:focus { outline: none; border-color: var(--cor); box-shadow: 0 0 0 4px color-mix(in srgb, var(--cor) 15%, transparent); background: #fff; }
+  .check { display: flex; gap: 10px; font-size: 14px; color: var(--mf-texto-2); margin-bottom: 10px; }
+  .check input { width: 18px; height: 18px; margin-top: 3px; accent-color: var(--cor); flex: none; }
+  .aviso { border-radius: 14px; padding: 12px 14px; font-size: 14px; background: var(--mf-alerta-suave); color: #6E4E14; margin: 10px 0; }
+  .ok { text-align: center; padding: 10px 0; }
+  .ok .ic { width: 64px; height: 64px; border-radius: 50%; background: var(--mf-ok-suave); color: var(--mf-ok); display: grid; place-items: center; margin: 0 auto 14px; }
+  .ok .ic svg { width: 30px; height: 30px; }
+  details { background: var(--mf-superficie); border: 1px solid var(--mf-linha); border-radius: 14px; padding: 14px 18px; margin-bottom: 8px; }
+  summary { font-weight: 600; cursor: pointer; }
+  details p { color: var(--mf-texto-2); margin: 10px 0 0; }
+  footer { padding: 32px 0 48px; color: var(--mf-texto-3); font-size: 13px; border-top: 1px solid var(--mf-linha); }
+  .carregando { display: inline-block; width: 20px; height: 20px; border: 2px solid var(--mf-linha); border-top-color: var(--cor); border-radius: 50%; animation: gira .8s linear infinite; }
+  @keyframes gira { to { transform: rotate(360deg); } }
+  .muted { color: var(--mf-texto-2); }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<main id="pagina"><div style="min-height:80vh;display:grid;place-items:center"><span class="carregando"></span></div></main>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script src="../app/js/config.js"></script>
+<script src="../app/js/nucleo.js"></script>
+<script src="../app/js/banco-memoria.js"></script>
+<script>
+  (function () { var d = !window.FLUYAN_CONFIG.API_URL || /[?&]demo=1/.test(location.search);
+    if (d) document.write('<script src="../app/js/demo.js"><\/script>'); })();
+</script>
+<script>
+(function () {
+  'use strict';
+  var qs = new URLSearchParams(location.search), SLUG = qs.get('m') || '', CFG = window.FLUYAN_CONFIG || {};
+  var DEMO = !CFG.API_URL || qs.get('demo') === '1';
+  var raiz = document.getElementById('pagina'), P = null, st = {};
+  function api(acao, dados) {
+    dados.slug = SLUG;
+    var pr = DEMO ? Promise.resolve(window.DEMO.processar({ acao: acao, dados: dados }))
+      : fetch(CFG.API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ acao: acao, dados: dados }) }).then(function (r) { return r.json(); });
+    return pr.then(function (r) { if (!r.ok) throw new Error(r.erro); return r.dados; });
+  }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function ic(n) { return '<i data-lucide="' + n + '"></i>'; }
+  function icones() { if (window.lucide) lucide.createIcons(); }
+  var DS = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'], MS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+  function dsem(d) { var p = d.split('-').map(Number); return new Date(Date.UTC(p[0], p[1] - 1, p[2])).getUTCDay(); }
+  function dataLonga(iso) { var d = iso.slice(0, 10), p = d.split('-'); return ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'][dsem(d)] + ', ' + Number(p[2]) + ' de ' + ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'][Number(p[1]) - 1]; }
+  function brl(c) { return (Number(c) / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
+  function wa(n, t) { n = String(n || '').replace(/\D/g, ''); if (n.length <= 11) n = '55' + n; return 'https://wa.me/' + n + '?text=' + encodeURIComponent(t || ''); }
+
+  if (!SLUG) { raiz.innerHTML = '<div class="wrap" style="padding:80px 16px"><h1>Página não encontrada</h1></div>'; return; }
+  api('publicoPerfil', {}).then(function (p) { P = p; desenhar(); }).catch(function (e) {
+    raiz.innerHTML = '<div class="wrap" style="padding:80px 16px"><h1>Página indisponível</h1><p class="muted">' + esc(e.message) + '</p></div>';
+  });
+
+  function desenhar() {
+    var m = P.medico, cor = /^#[0-9a-f]{6}$/i.test(m.cor) ? m.cor : '#0F5257';
+    document.body.style.setProperty('--cor', cor);
+    document.title = m.nome_publico + (m.especialidade ? ' · ' + m.especialidade : '') + ' · Agende sua consulta';
+    var registro = m.conselho + ' ' + m.registro + (m.uf ? ' ' + m.uf : '') + (m.rqe ? ' · RQE ' + m.rqe : '');
+    var ld = { '@context': 'https://schema.org', '@type': 'Physician', name: m.nome_publico, medicalSpecialty: m.especialidade || undefined, telephone: m.whatsapp || undefined };
+    var s = document.createElement('script'); s.type = 'application/ld+json'; s.textContent = JSON.stringify(ld); document.head.appendChild(s);
+    var html = '';
+    P.blocos.filter(function (b) { return b.visivel !== false; }).forEach(function (b) {
+      if (b.tipo === 'capa') html += '<header class="capa"><div class="wrap">' + (m.foto_url ? '<img class="foto" src="' + esc(m.foto_url) + '" alt="' + esc(m.nome_publico) + '">' : '<div class="foto">' + esc(m.nome_publico.replace(/^(dra?\.?)\s+/i, '').charAt(0)) + '</div>') +
+        '<h1>' + esc(b.titulo || m.nome_publico) + '</h1><div class="esp">' + esc([m.especialidade, m.subespecialidades].filter(Boolean).join(' · ')) + '</div>' +
+        '<span class="selo">' + ic('badge-check') + esc(registro) + '</span>' + (b.texto ? '<p class="intro">' + esc(b.texto) + '</p>' : '') +
+        '<div class="acoes">' + (P.locais.length ? '<a class="btn btn-p" href="#agendar">' + ic('calendar-check') + 'Agendar consulta</a>' : '') +
+        (m.whatsapp ? '<a class="btn btn-s" href="' + wa(m.whatsapp, 'Olá, vim pela sua página e gostaria de informações.') + '" target="_blank" rel="noopener">' + ic('message-circle') + 'WhatsApp</a>' : '') + '</div></div></header>';
+      if (b.tipo === 'sobre' && (b.texto || m.apresentacao)) html += bloco(b, '<p class="texto">' + esc(b.texto || m.apresentacao) + '</p>' + (m.formacao ? '<p class="texto" style="margin-top:14px"><b>Formação</b><br>' + esc(m.formacao) + '</p>' : ''));
+      if (b.tipo === 'texto') html += bloco(b, '<p class="texto">' + esc(b.texto) + '</p>');
+      if (b.tipo === 'servicos' && P.servicos.length) html += bloco(b, (b.texto ? '<p class="texto">' + esc(b.texto) + '</p>' : '') + '<div class="cartoes">' + P.servicos.map(function (x) {
+        return '<div class="cartao"><h3>' + esc(x.nome) + '</h3><small>' + x.duracao_min + ' min · ' + ({ presencial: 'presencial', online: 'online', ambas: 'presencial ou online' }[x.modalidade]) + (x.preco_centavos ? ' · ' + brl(x.preco_centavos) : '') + '</small>' + (x.descricao ? '<p>' + esc(x.descricao) + '</p>' : '') + '</div>'; }).join('') + '</div>');
+      if (b.tipo === 'planos' && P.planos.length) html += bloco(b, '<div class="cartoes">' + P.planos.map(function (x) { return '<div class="cartao"><h3>' + esc(x.nome) + '</h3><small>validade de ' + x.validade_dias + ' dias</small><p>' + esc(x.descricao) + '</p></div>'; }).join('') +
+        '</div><p class="muted" style="font-size:13px;margin-top:10px">Acompanhamentos são serviços profissionais e não substituem plano de saúde.</p>');
+      if (b.tipo === 'locais' && P.locais.length) html += bloco(b, '<div class="cartoes">' + P.locais.map(function (l) { return '<div class="cartao"><h3>' + esc(l.nome) + '</h3><small>' + esc(l.tipo === 'online' ? 'Atendimento por vídeo' : [l.endereco, l.cidade].filter(Boolean).join(', ')) + '</small></div>'; }).join('') + '</div>');
+      if (b.tipo === 'agendar' && P.locais.length) html += '<section class="bloco" id="agendar"><div class="wrap"><h2>' + esc(b.titulo || 'Agende sua consulta') + '</h2>' + (b.texto ? '<p class="texto">' + esc(b.texto) + '</p>' : '') + '<div class="ag" id="ag"></div></div></section>';
+      if (b.tipo === 'faq' && (b.itens || []).length) html += bloco(b, b.itens.filter(function (x) { return x.p; }).map(function (x) { return '<details><summary>' + esc(x.p) + '</summary><p>' + esc(x.r) + '</p></details>'; }).join(''));
+      if (b.tipo === 'contato') html += bloco(b, (b.texto ? '<p class="texto">' + esc(b.texto) + '</p>' : '') + '<div class="acoes">' + (m.whatsapp ? '<a class="btn btn-s" href="' + wa(m.whatsapp, 'Olá!') + '" target="_blank" rel="noopener">' + ic('message-circle') + 'WhatsApp</a>' : '') +
+        (m.instagram ? '<a class="btn btn-s" href="https://instagram.com/' + encodeURIComponent(m.instagram) + '" target="_blank" rel="noopener">' + ic('instagram') + '@' + esc(m.instagram) + '</a>' : '') + '</div>');
+    });
+    html += '<footer><div class="wrap">Responsável técnico: ' + esc(m.nome_publico) + ' · ' + esc(registro) + '<br>Informações desta página não substituem consulta médica. Em caso de urgência, procure o pronto-socorro ou ligue 192.<br><br>Página criada com Fluyan' + (DEMO ? ' · demonstração com dados fictícios' : '') + '</div></footer>';
+    raiz.innerHTML = html; icones();
+    if (document.getElementById('ag')) iniciarAgenda();
+  }
+  function bloco(b, corpo) { return '<section class="bloco"><div class="wrap"><h2>' + esc(b.titulo) + '</h2>' + corpo + '</div></section>'; }
+
+  /* ---------------------------------------------------------- agendamento */
+  function iniciarAgenda() { st = { local: P.locais[0].vinculo_id }; desenharAg(); }
+  function servicosDoLocal() { var l = P.locais.filter(function (x) { return x.vinculo_id === st.local; })[0]; return P.servicos.filter(function (s) { return l && l.servicos.indexOf(s.id) >= 0; }); }
+  function desenharAg() {
+    var ag = document.getElementById('ag'), srvs = servicosDoLocal();
+    if (!srvs.some(function (s) { return s.id === st.servico; })) st.servico = srvs[0] && srvs[0].id;
+    ag.innerHTML = (P.locais.length > 1 ? '<div class="passo"><b>Local</b><div class="opcoes">' + P.locais.map(function (l) { return '<button class="opcao' + (l.vinculo_id === st.local ? ' on' : '') + '" data-l="' + l.vinculo_id + '">' + esc(l.nome) + '<small>' + esc(l.tipo === 'online' ? 'por vídeo' : (l.cidade || '')) + '</small></button>'; }).join('') + '</div></div>' : '') +
+      '<div class="passo"><b>Atendimento</b><div class="opcoes">' + srvs.map(function (s) { return '<button class="opcao' + (s.id === st.servico ? ' on' : '') + '" data-s="' + s.id + '">' + esc(s.nome) + '<small>' + s.duracao_min + ' min</small></button>'; }).join('') + '</div></div>' +
+      '<div class="passo"><b>Dia</b><div class="dias" id="dias"><span class="carregando"></span></div></div><div class="passo" id="p-hora" hidden><b>Horário</b><div class="horas" id="horas"></div></div><div id="p-dados"></div>';
+    ag.querySelectorAll('[data-l]').forEach(function (b) { b.onclick = function () { st.local = b.dataset.l; st.data = st.hora = ''; desenharAg(); }; });
+    ag.querySelectorAll('[data-s]').forEach(function (b) { b.onclick = function () { st.servico = b.dataset.s; st.data = st.hora = ''; desenharAg(); }; });
+    api('publicoDias', { vinculo_id: st.local, servico_id: st.servico, dias: 45 }).then(function (dias) {
+      var cx = document.getElementById('dias'); dias = dias.filter(function (d) { return d.livres > 0; });
+      if (!dias.length) { cx.innerHTML = '<span class="muted">Sem horários disponíveis nas próximas semanas. Fale pelo WhatsApp.</span>'; return; }
+      cx.innerHTML = dias.map(function (d) { var p = d.data.split('-'); return '<button class="opcao" data-d="' + d.data + '">' + DS[dsem(d.data)] + '<b>' + Number(p[2]) + '</b><small>' + MS[Number(p[1]) - 1] + '</small></button>'; }).join('');
+      cx.querySelectorAll('[data-d]').forEach(function (b) { b.onclick = function () { st.data = b.dataset.d; st.hora = ''; cx.querySelectorAll('.opcao').forEach(function (o) { o.classList.toggle('on', o === b); }); horas(); }; });
+    }).catch(function (e) { document.getElementById('dias').innerHTML = '<span class="muted">' + esc(e.message) + '</span>'; });
+  }
+  function horas() {
+    var ph = document.getElementById('p-hora'), cx = document.getElementById('horas'); ph.hidden = false; cx.innerHTML = '<span class="carregando"></span>'; document.getElementById('p-dados').innerHTML = '';
+    api('publicoHorarios', { vinculo_id: st.local, servico_id: st.servico, data: st.data }).then(function (h) {
+      if (!h.slots.length) { cx.innerHTML = '<span class="muted">' + esc(h.motivo || 'Sem horários.') + '</span>'; return; }
+      cx.innerHTML = h.slots.map(function (s) { return '<button class="opcao" data-h="' + s + '">' + s + '</button>'; }).join('');
+      cx.querySelectorAll('[data-h]').forEach(function (b) { b.onclick = function () { st.hora = b.dataset.h; cx.querySelectorAll('.opcao').forEach(function (o) { o.classList.toggle('on', o === b); }); dados(); }; });
+    });
+  }
+  function dados() {
+    var pd = document.getElementById('p-dados');
+    pd.innerHTML = '<div class="passo"><b>Seus dados</b><label class="campo"><span>Nome completo</span><input id="nome" autocomplete="name"></label>' +
+      '<label class="campo"><span>WhatsApp com DDD</span><input id="whats" type="tel" inputmode="tel" autocomplete="tel" placeholder="(85) 99999-0000"></label>' +
+      '<label class="check"><input type="checkbox" id="aceite"><span>Autorizo o uso destes dados para agendar e confirmar este atendimento.</span></label>' +
+      '<label class="check"><input type="checkbox" id="msgs"><span>Aceito receber lembretes pelo WhatsApp.</span></label>' +
+      '<div id="erro"></div><button class="btn btn-p" id="reservar" style="width:100%">' + ic('calendar-check') + 'Agendar ' + dataLonga(st.data) + ', ' + st.hora + '</button></div>';
+    icones(); pd.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('reservar').onclick = function () {
+      var b = this; b.disabled = true;
+      var pac = { nome: document.getElementById('nome').value, whatsapp: document.getElementById('whats').value, aceite: document.getElementById('aceite').checked, consente_whatsapp: document.getElementById('msgs').checked };
+      api('publicoReservar', { vinculo_id: st.local, servico_id: st.servico, data: st.data, hora: st.hora, paciente: pac })
+        .then(function (r) { return api('publicoConfirmar', { id: r.id, codigo: r.codigo }); })
+        .then(function (c) { confirmado(c); })
+        .catch(function (e) { b.disabled = false; document.getElementById('erro').innerHTML = '<div class="aviso">' + esc(e.message) + '</div>'; if (/ocupado|esgotad/i.test(e.message)) horas(); });
+    };
+  }
+  function confirmado(c) {
+    var m = P.medico, l = P.locais.filter(function (x) { return x.vinculo_id === st.local; })[0], s = P.servicos.filter(function (x) { return x.id === st.servico; })[0];
+    var txt = 'Olá! Agendei ' + s.nome + ' em ' + dataLonga(c.inicio) + ' às ' + c.inicio.slice(11, 16) + ' (' + l.nome + '). Código ' + c.codigo + '.';
+    document.getElementById('ag').innerHTML = '<div class="ok"><div class="ic">' + ic('check') + '</div><h2 style="font-size:26px">' + (c.status === 'pendente' ? 'Pedido enviado' : 'Consulta agendada') + '</h2>' +
+      '<p class="muted">' + esc(s.nome) + ' · ' + dataLonga(c.inicio) + ' às ' + c.inicio.slice(11, 16) + '<br>' + esc(l.nome) + (l.endereco ? ', ' + esc(l.endereco) : '') + '</p>' +
+      '<p>Código <b>' + esc(c.codigo) + '</b></p>' + (c.status === 'pendente' ? '<p class="muted">O consultório vai confirmar o horário com você.</p>' : '') +
+      (s.orientacoes ? '<div class="cartao" style="text-align:left;margin:14px 0"><b>Orientações</b><p>' + esc(s.orientacoes) + '</p></div>' : '') +
+      (m.whatsapp ? '<a class="btn btn-p" href="' + wa(m.whatsapp, txt) + '" target="_blank" rel="noopener">' + ic('message-circle') + 'Avisar pelo WhatsApp</a>' : '') + '</div>';
+    icones();
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+.taste-skill/
+node_modules/
+privado/
+*.zip
+docs/MedFlow_Documento_Mestre.md
