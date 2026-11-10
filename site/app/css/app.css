@@ -204,3 +204,45 @@ svg.lucide, i[data-lucide] { width: 18px; height: 18px; stroke-width: 1.75; flex
   .modal header, .modal .corpo, .modal footer { padding-left: 16px; padding-right: 16px; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+
+/* ------------------------------------------------------------ v0.4: áreas */
+.lateral a.item span { flex: 1; }
+.lateral .rodape .item.conta { margin: 10px -4px 0; padding: 8px 10px; }
+.titulo-bloco { font-family: var(--mf-fonte); font-size: 15px; font-weight: 600; color: var(--mf-texto-2); margin: 6px 0 12px; }
+.passos { margin-bottom: 20px; }
+.areas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.area-card { background: var(--mf-superficie); border: 1px solid var(--mf-linha); border-radius: var(--mf-raio-g); box-shadow: var(--mf-sombra-1); display: flex; flex-direction: column; min-width: 0; transition: border-color var(--mf-rapido), box-shadow var(--mf-medio), transform var(--mf-medio) var(--mf-ease); }
+.area-card:hover { border-color: var(--mf-petroleo-2); box-shadow: var(--mf-sombra-2); transform: translateY(-2px); }
+.area-principal { display: flex; gap: 16px; align-items: flex-start; padding: 22px 22px 16px; text-decoration: none; color: inherit; flex: 1; border-radius: var(--mf-raio-g) var(--mf-raio-g) 0 0; }
+.area-principal > svg, .area-principal > i { color: var(--mf-texto-3); margin-top: 14px; transition: transform var(--mf-medio) var(--mf-ease), color var(--mf-rapido); }
+.area-card:hover .area-principal > svg { transform: translateX(4px); color: var(--mf-petroleo); }
+.area-ic { width: 52px; height: 52px; border-radius: 16px; background: var(--mf-salvia-suave); color: var(--mf-petroleo); display: grid; place-items: center; flex: none; }
+.area-ic svg, .area-ic i { width: 24px; height: 24px; }
+.area-tx { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.area-tx b { font: 500 24px/1.15 var(--mf-fonte-titulo); letter-spacing: -.01em; }
+.area-tx span { color: var(--mf-texto-2); font-size: 14px; }
+.area-tx em { font-style: normal; font-weight: 600; font-size: 13.5px; color: var(--mf-petroleo); margin-top: 8px; font-variant-numeric: tabular-nums; }
+.area-atalhos { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 22px 18px 90px; }
+.area-atalhos a { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border-radius: 99px; background: var(--mf-perola); border: 1px solid var(--mf-linha); font-size: 13px; font-weight: 600; text-decoration: none; color: var(--mf-tinta); transition: border-color var(--mf-rapido), color var(--mf-rapido); }
+.area-atalhos a:hover { border-color: var(--mf-petroleo-2); color: var(--mf-petroleo); }
+.area-atalhos svg, .area-atalhos i { width: 14px; height: 14px; color: var(--mf-petroleo); }
+
+.subnav { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 22px; font-size: 14px; }
+.subnav .volta { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 12px 0 8px; border-radius: 99px; text-decoration: none; color: var(--mf-texto-2); font-weight: 600; transition: background var(--mf-rapido), color var(--mf-rapido); }
+.subnav .volta:hover { background: var(--mf-superficie); color: var(--mf-petroleo); }
+.subnav .onde { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; padding-left: 12px; border-left: 2px solid var(--mf-linha); }
+.subnav .onde svg, .subnav .onde i { color: var(--mf-petroleo); }
+.abas-area { display: flex; gap: 2px; background: var(--mf-superficie); border: 1px solid var(--mf-linha); border-radius: 99px; padding: 4px; margin-left: auto; max-width: 100%; overflow-x: auto; }
+.abas-area a { display: inline-flex; align-items: center; gap: 7px; height: 36px; padding: 0 14px; border-radius: 99px; text-decoration: none; color: var(--mf-texto-2); font-weight: 600; font-size: 13.5px; white-space: nowrap; transition: background var(--mf-rapido), color var(--mf-rapido); }
+.abas-area a:hover { color: var(--mf-petroleo); }
+.abas-area a.on { background: var(--mf-petroleo); color: #fff; }
+.abas-area svg, .abas-area i { width: 15px; height: 15px; }
+
+@media (max-width: 860px) {
+  .areas { grid-template-columns: 1fr; }
+  .area-principal { padding: 18px 16px 12px; gap: 14px; }
+  .area-atalhos { padding: 0 16px 16px; }
+  .area-tx b { font-size: 21px; }
+  .abas-area { margin-left: 0; width: 100%; }
+  .subnav { gap: 8px; margin-bottom: 16px; }
+}

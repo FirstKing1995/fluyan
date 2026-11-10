@@ -9,7 +9,7 @@
 (function (raiz) {
   'use strict';
 
-  var VERSAO = '0.3.0';
+  var VERSAO = '0.4.0';
 
   var PLANOS = {
     essencial: { nome: 'Essencial', preco: 49700, pecas: 20, videos: 0, medicos: 1, usuarios: 3 },

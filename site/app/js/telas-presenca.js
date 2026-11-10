@@ -79,11 +79,12 @@
   }
   function mudarStatus(c, st, box) {
     var dados = { id: c.id, status: st };
-    if (st === 'aprovado' && A.json(c.alertas, []).length) {
-      var j = window.prompt('Há alertas de publicidade médica. Para aprovar mesmo assim, registre a justificativa:', ''); if (!j) return; dados.justificativa = j;
-    }
-    A.api('conteudoStatus', dados).then(function () { A.aviso(st === 'aprovado' ? 'Aprovado. Fica registrado com seu nome.' : 'Status atualizado.'); return A.recarregar(); })
-      .then(function () { if (box) mostrarConteudo(box, c.id); }).catch(function (e) { A.aviso(e.message, true); });
+    var pr = st === 'aprovado' && A.json(c.alertas, []).length
+      ? A.perguntar('Aprovar com alertas?', 'Este conteúdo tem alertas de publicidade médica. Para aprovar mesmo assim, registre a justificativa. Ela fica guardada com o seu nome.', { rotulo: 'Justificativa', obrigatorio: true, confirmar: 'Aprovar' })
+      : Promise.resolve('');
+    pr.then(function (j) { if (j === null) return; if (j) dados.justificativa = j; return enviar(); });
+    function enviar() { return A.api('conteudoStatus', dados).then(function () { A.aviso(st === 'aprovado' ? 'Aprovado. Fica registrado com seu nome.' : 'Status atualizado.'); return A.recarregar(); })
+      .then(function () { if (box) mostrarConteudo(box, c.id); }).catch(function (e) { A.aviso(e.message, true); }); }
   }
   function dialogoCapcut(p, m) {
     var cfg = A.store.get('fluyan_capcut', { pasta: 'C:/Users/SEU-USUARIO/AppData/Local/CapCut/User Data/Projects/com.lveditor.draft', dados: 'C:/Users/SEU-USUARIO/AppData/Local/CapCut' });
@@ -180,7 +181,8 @@
     el.querySelector('#publicar').onclick = function () {
       salvar(true).catch(function (e) {
         if (e.codigo !== 'alertas') return A.aviso(e.message, true);
-        var j = window.prompt(e.message + '\n\nPara publicar mesmo assim, registre a justificativa:', ''); if (j) salvar(true, j).catch(function (x) { A.aviso(x.message, true); });
+        A.perguntar('Publicar com alertas?', e.message + ' Para publicar mesmo assim, registre a justificativa.', { rotulo: 'Justificativa', obrigatorio: true, confirmar: 'Publicar' })
+          .then(function (j) { if (j) salvar(true, j).catch(function (x) { A.aviso(x.message, true); }); });
       });
     };
     el.querySelector('#add').onclick = function () {

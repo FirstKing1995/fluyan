@@ -122,6 +122,19 @@
         { rotulo: rotulo || 'Confirmar', classe: perigo ? 'btn-perigo' : 'btn-p', acao: function (f) { f(); ok(true); } }] });
     });
   };
+  /** Pergunta com campo de texto. Resolve com o texto, ou null se a pessoa desistir. */
+  A.perguntar = function (titulo, texto, o) {
+    o = o || {};
+    return new Promise(function (ok) {
+      var res = null;
+      A.modal({ titulo: titulo, corpo: '<p class="muted" style="margin-top:0">' + A.esc(texto) + '</p>' + A.campo(o.rotulo || 'Motivo', 'resposta', '', { area: true }),
+        botoes: [{ rotulo: 'Voltar' }, { rotulo: o.confirmar || 'Confirmar', classe: o.perigo ? 'btn-perigo' : 'btn-p', acao: function (f, el) {
+          var v = el.querySelector('[name=resposta]').value.trim();
+          if (o.obrigatorio && !v) { A.aviso('Preencha para continuar.', true); return; }
+          res = v; f();
+        } }], aoFechar: function () { ok(res); } });
+    });
+  };
   /** Lê os campos [name] de um elemento em objeto. Checkbox = booleano; name terminado em [] = lista. */
   A.form = function (el) {
     var o = {};

@@ -20,32 +20,56 @@
     var ags = d.agendamentos.filter(function (a) { return ATIVOS[a.status]; });
     var deHoje = ags.filter(function (a) { return a.inicio.slice(0, 10) === hoje; }).sort(ordem);
     var semana = ags.filter(function (a) { var x = a.inicio.slice(0, 10); return x >= hoje && x <= A.somarDias(hoje, 6); }).length;
-    var mes30 = A.somarDias(hoje, -30);
-    var novos = d.pacientes.filter(function (p) { return p.criado_em.slice(0, 10) >= mes30; }).length;
-    var revisar = (d.conteudos || []).filter(function (c) { return c.status === 'revisao'; });
+    var proximo = ags.filter(function (a) { return a.inicio >= d.agora; }).sort(ordem)[0];
+    var conteudos = d.conteudos || [], revisar = conteudos.filter(function (c) { return c.status === 'revisao'; });
+    var pendentes = ags.filter(function (a) { return a.status === 'pendente'; }).length;
+    var alteracoes = ags.filter(function (a) { return a.status === 'reagendamento_solicitado'; }).length;
+    var abaixo = d.ocupacao.filter(function (o) { return o.data >= hoje && o.data <= A.somarDias(hoje, 6) && o.abaixo_minimo && o.situacao !== 'fechada'; });
+    var aReceber = (d.financeiro || []).filter(function (f) { return f.status === 'pendente'; });
+    var somaReceber = aReceber.reduce(function (s, f) { return s + Number(f.valor_centavos); }, 0);
     var medico = d.medicos[0] || {};
     var nomeSaud = eu.papel === 'secretaria' ? eu.nome.split(' ')[0] : (medico.nome_publico || eu.nome);
     var h = Number((d.agora || '').slice(11, 13));
     var saud = h < 12 ? 'Bom dia' : (h < 18 ? 'Boa tarde' : 'Boa noite');
-    var passos = primeirosPassos();
+    var passos = primeirosPassos(), areas = A.areasDoPapel();
 
-    var proxDias = d.ocupacao.filter(function (o) { return o.data >= hoje; }).sort(function (a, b) { return a.data < b.data ? -1 : 1; }).slice(0, 7);
-    el.innerHTML = '<div class="topo"><div><h1>' + saud + ', ' + esc(nomeSaud) + '</h1><p>' + A.fmtData(hoje, true) + ' · ' + d.locais.filter(function (l) { return l.status === 'ativo'; }).length + ' locais de atendimento</p></div>' +
+    /* o que pede uma ação agora: [ícone, título, detalhe, destino, botão] */
+    var atencao = [];
+    if (alteracoes) atencao.push(['calendar-clock', alteracoes + (alteracoes > 1 ? ' pedidos de alteração' : ' pedido de alteração'), 'Uma clínica ou paciente pediu para mudar o horário.', 'agenda', 'Ver na agenda']);
+    if (pendentes) atencao.push(['calendar-check', pendentes + (pendentes > 1 ? ' agendamentos aguardando' : ' agendamento aguardando') + ' confirmação', 'Confirme ou recuse para liberar o horário.', 'agenda', 'Confirmar']);
+    if (abaixo.length) atencao.push(['triangle-alert', abaixo.length + (abaixo.length > 1 ? ' dias abaixo do mínimo' : ' dia abaixo do mínimo') + ' nesta semana', abaixo.slice(0, 3).map(function (o) { return A.fmtData(o.data) + ' · ' + nomeLocal(o.vinculo_id) + ' (' + o.ocupacao + ' de ' + o.min + ')'; }).join(' · '), 'agenda', 'Ver dias']);
+    if (revisar.length) atencao.push(['sparkles', revisar.length + (revisar.length > 1 ? ' conteúdos esperando' : ' conteúdo esperando') + ' sua revisão', 'Nada é publicado sem a sua aprovação.', 'conteudo', 'Revisar']);
+    if (d.financeiro && aReceber.length) atencao.push(['wallet', A.brl(somaReceber) + ' a receber', aReceber.length + ' lançamentos pendentes de consultas concluídas.', 'financeiro', 'Ver lançamentos']);
+
+    var resumo = {
+      atender: deHoje.length + (deHoje.length === 1 ? ' consulta hoje' : ' consultas hoje') + ' · ' + semana + ' nos próximos 7 dias',
+      divulgar: revisar.length ? revisar.length + ' para revisar · ' + conteudos.length + ' no calendário' : conteudos.length + (conteudos.length === 1 ? ' conteúdo no calendário' : ' conteúdos no calendário'),
+      organizar: d.locais.filter(function (l) { return l.status === 'ativo'; }).length + ' locais · ' + d.servicos.filter(function (s) { return s.status === 'ativo'; }).length + ' serviços',
+      resultados: d.financeiro ? A.brl(somaReceber) + ' a receber' : ''
+    };
+
+    el.innerHTML = '<div class="topo"><div><h1>' + saud + ', ' + esc(nomeSaud) + '</h1><p>' + A.fmtData(hoje, true) +
+      (proximo ? ' · próximo atendimento ' + (proximo.inicio.slice(0, 10) === hoje ? 'hoje' : A.fmtData(proximo.inicio)) + ' às ' + A.hora(proximo.inicio) : '') + '</p></div>' +
       '<div class="acoes"><button class="btn btn-p" id="novo-ag">' + i('calendar-plus') + 'Agendar</button></div></div>' +
-      (passos.falta.length ? '<div class="cartao" style="margin-bottom:14px"><header><h2>Primeiros passos</h2><span class="chip c-sa">' + passos.feitos + ' de ' + passos.total + '</span></header>' +
+
+      (passos.falta.length ? '<div class="cartao passos"><header><h2>Primeiros passos</h2><span class="chip c-sa">' + passos.feitos + ' de ' + passos.total + '</span></header>' +
         '<div class="barra" style="margin-bottom:14px"><i style="width:' + Math.round(passos.feitos / passos.total * 100) + '%"></i></div><ul class="lista">' +
-        passos.falta.map(function (p) { return '<li class="clicavel" data-ir="' + p[2] + '">' + i('circle') + '<span class="meio"><b>' + p[0] + '</b><small>' + p[1] + '</small></span>' + i('chevron-right') + '</li>'; }).join('') + '</ul></div>' : '') +
-      '<div class="grade g4" style="margin-bottom:14px">' +
-      kpi('calendar-check', 'Consultas hoje', deHoje.length, deHoje.filter(function (a) { return a.status === 'pendente'; }).length + ' pendentes') +
-      kpi('calendar-range', 'Próximos 7 dias', semana, 'em todos os locais') +
-      kpi('user-plus', 'Pacientes novos', novos, 'últimos 30 dias') +
-      (d.conteudos ? kpi('sparkles', 'Conteúdos para revisar', revisar.length, 'no calendário editorial') : kpi('wallet', 'A receber', A.brl((d.financeiro || []).filter(function (f) { return f.status === 'pendente'; }).reduce(function (s, f) { return s + Number(f.valor_centavos); }, 0)), 'lançamentos pendentes')) +
-      '</div><div class="grade g2">' +
+        passos.falta.map(function (p, n) { return '<li class="clicavel" data-ir="' + p[2] + '">' + i(n === 0 ? 'circle-arrow-right' : 'circle') + '<span class="meio"><b>' + p[0] + '</b><small>' + p[1] + '</small></span>' + (n === 0 ? '<span class="chip c-sa">Comece aqui</span>' : i('chevron-right')) + '</li>'; }).join('') + '</ul></div>' : '') +
+
+      '<h2 class="titulo-bloco">O que você quer fazer?</h2><div class="areas">' + areas.map(function (a) {
+        return '<div class="area-card"><a class="area-principal" href="#' + a.id + '"><span class="area-ic">' + i(a.icone) + '</span><span class="area-tx"><b>' + a.rotulo + '</b><span>' + a.desc + '</span>' +
+          (resumo[a.id] ? '<em>' + esc(resumo[a.id]) + '</em>' : '') + '</span>' + i('arrow-right') + '</a>' +
+          '<div class="area-atalhos">' + a.telas.map(function (t) { return '<a href="#' + t + '">' + i(A.iconeTela(t)) + A.rotuloTela(t) + '</a>'; }).join('') + '</div></div>';
+      }).join('') + '</div>' +
+
+      '<div class="grade g2" style="margin-top:14px;align-items:start">' +
+      '<div class="cartao"><header><h2>Precisa da sua atenção</h2>' + (atencao.length ? '<span class="chip c-al">' + atencao.length + '</span>' : '') + '</header>' +
+      (atencao.length ? '<ul class="lista">' + atencao.map(function (x) {
+        return '<li><span class="avatar">' + i(x[0]) + '</span><span class="meio"><b>' + esc(x[1]) + '</b><small>' + esc(x[2]) + '</small></span><a class="btn btn-s btn-pq" href="#' + x[3] + '">' + x[4] + '</a></li>'; }).join('') + '</ul>'
+        : A.vazio('circle-check-big', 'Tudo em dia', 'Nenhuma pendência agora.')) + '</div>' +
       '<div class="cartao"><header><h2>Atendimentos de hoje</h2><a class="btn btn-g btn-pq" href="#agenda">Agenda ' + i('arrow-right') + '</a></header>' +
-      (deHoje.length ? '<ul class="lista">' + deHoje.map(linhaAg).join('') + '</ul>' : A.vazio('coffee', 'Nenhum atendimento hoje', 'Os próximos aparecem na agenda.')) + '</div>' +
-      '<div class="cartao"><header><h2>Ocupação dos próximos dias</h2><span class="peq muted">mínimo em dourado</span></header>' +
-      (proxDias.length ? proxDias.map(barraOcup).join('') : A.vazio('building-2', 'Sem dias de atendimento', 'Configure os locais e horários.', '<a class="btn btn-s btn-pq" href="#locais" style="margin-top:12px">Configurar</a>')) + '</div>' +
-      '</div>';
+      (deHoje.length ? '<ul class="lista">' + deHoje.slice(0, 6).map(linhaAg).join('') + '</ul>' + (deHoje.length > 6 ? '<p class="peq muted" style="margin:8px 0 0">e mais ' + (deHoje.length - 6) + ' na agenda</p>' : '')
+        : A.vazio('coffee', 'Nenhum atendimento hoje', proximo ? 'O próximo é ' + A.fmtData(proximo.inicio) + ' às ' + A.hora(proximo.inicio) + '.' : 'Os próximos aparecem na agenda.')) + '</div></div>';
     el.querySelector('#novo-ag').onclick = function () { novoAgendamento(); };
     el.querySelectorAll('[data-ir]').forEach(function (li) { li.onclick = function () { location.hash = li.dataset.ir; }; });
     ligarAcoesAg(el);
@@ -89,9 +113,12 @@
     var texto = 'Olá, ' + (p.nome || '').split(' ')[0] + '. Confirmando seu atendimento em ' + A.fmtData(a.inicio, true) + ' às ' + A.hora(a.inicio) + ', ' + nomeLocal(a.vinculo_id) + '. Código ' + a.codigo + '.';
     var botoes = acoes.map(function (x) {
       return { rotulo: x[1], classe: x[2], acao: function (fechar) {
-        var motivo = x[0] === 'cancelado' || x[0] === 'reagendamento_solicitado' ? window.prompt('Motivo (opcional):', '') : '';
-        if (motivo === null) return;
-        return A.api('agStatus', { id: a.id, status: x[0], motivo: motivo }).then(function (r) { fechar(); A.aviso(r.status === 'reagendamento_solicitado' && x[0] === 'cancelado' ? 'Fora do prazo: enviamos como pedido de alteração.' : 'Atualizado.'); return A.atualizar(); });
+        var pede = x[0] === 'cancelado' || x[0] === 'reagendamento_solicitado';
+        var pr = pede ? A.perguntar(x[1] + ' este atendimento?', nomePac(a.paciente_id) + ' · ' + A.fmtData(a.inicio) + ' às ' + A.hora(a.inicio) + '.', { rotulo: 'Motivo (opcional)', confirmar: x[1], perigo: x[0] === 'cancelado' }) : Promise.resolve('');
+        return pr.then(function (motivo) {
+          if (motivo === null) return;
+          return A.api('agStatus', { id: a.id, status: x[0], motivo: motivo }).then(function (r) { fechar(); A.aviso(r.status === 'reagendamento_solicitado' && x[0] === 'cancelado' ? 'Fora do prazo: enviamos como pedido de alteração.' : 'Atualizado.'); return A.atualizar(); });
+        });
       } };
     });
     if (!clinica && ATIVOS[a.status]) botoes.unshift({ rotulo: i('calendar-clock') + 'Remarcar', acao: function (fechar) { fechar(); novoAgendamento({ remarcar: a }); } });
@@ -344,6 +371,7 @@
       '<div class="grade g4" style="margin-bottom:14px">' + kpi('wallet', 'Recebido no mês', A.brl(soma(doMes, 'recebido')), 'lançamentos recebidos') + kpi('hourglass', 'A receber', A.brl(soma(f, 'pendente')), 'pendentes') +
       kpi('user-check', 'Comparecimento', concl + faltas ? Math.round(concl / (concl + faltas) * 100) + '%' : '—', concl + ' atendidos, ' + faltas + ' faltas') +
       kpi('users-round', 'Pacientes ativos', d.pacientes.filter(function (p) { return p.etapa === 'ativo' || p.etapa === 'acompanhamento'; }).length, 'no cadastro') + '</div>' +
+      '<div class="cartao" style="margin-bottom:14px"><header><h2>Ocupação dos próximos dias</h2><span class="peq muted">mínimo em dourado</span></header>' + (function () { var px = d.ocupacao.filter(function (o) { return o.data >= hoje; }).sort(function (a, b) { return a.data < b.data ? -1 : 1; }).slice(0, 8); return px.length ? px.map(barraOcup).join('') : '<p class="muted peq" style="margin:0">Sem dias de atendimento configurados.</p>'; })() + '</div>' +
       '<div class="grade g2"><div class="cartao"><h2>Receita por local</h2>' + (Object.keys(porLocal).length ? Object.keys(porLocal).map(function (k) {
         var max = Math.max.apply(null, Object.keys(porLocal).map(function (x) { return porLocal[x]; }));
         return '<div class="ocup" style="grid-template-columns:140px 1fr auto"><span>' + esc(k) + '</span><div class="barra"><i style="width:' + (porLocal[k] / max * 100) + '%"></i></div><b>' + A.brl(porLocal[k]) + '</b></div>'; }).join('') : A.vazio('wallet', 'Sem lançamentos', 'Concluir uma consulta com preço gera a receita.')) + '</div>' +

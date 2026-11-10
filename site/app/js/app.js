@@ -1,29 +1,51 @@
 /* ==========================================================================
-   FLUYAN — casca do painel: entrada, menu por papel e rotas
+   FLUYAN — casca do painel: entrada, áreas, menus e rotas
+   Depois de entrar, a pessoa vê a tela inicial com poucas ÁREAS grandes.
+   Cada área abre só as telas dela, em abas. Perfis com poucas telas
+   (clínica parceira, administrador) usam menu direto.
    ========================================================================== */
 (function () {
   'use strict';
   var A = window.A;
   A.telas = A.telas || {};
 
-  var MENU = [
-    { id: 'inicio', rotulo: 'Início', icone: 'layout-dashboard', papeis: ['titular', 'medico', 'secretaria'] },
-    { id: 'agenda', rotulo: 'Agenda', icone: 'calendar-days', papeis: ['titular', 'medico', 'secretaria', 'clinica'] },
-    { id: 'pacientes', rotulo: 'Pacientes', icone: 'users-round', papeis: ['titular', 'medico', 'secretaria'] },
-    { id: 'locais', rotulo: 'Locais e clínicas', icone: 'building-2', papeis: ['titular', 'medico'] },
-    { id: 'servicos', rotulo: 'Serviços e planos', icone: 'stethoscope', papeis: ['titular', 'medico'] },
-    { grupo: 'Presença digital', papeis: ['titular', 'medico'] },
-    { id: 'estudio', rotulo: 'Estúdio', icone: 'sparkles', papeis: ['titular', 'medico'] },
-    { id: 'conteudo', rotulo: 'Conteúdo', icone: 'calendar-range', papeis: ['titular', 'medico'] },
-    { id: 'pagina', rotulo: 'Minha página', icone: 'panels-top-left', papeis: ['titular', 'medico'] },
-    { grupo: 'Gestão', papeis: ['titular', 'medico', 'secretaria'] },
-    { id: 'financeiro', rotulo: 'Financeiro', icone: 'wallet', papeis: ['titular', 'medico', 'secretaria'] },
-    { id: 'equipe', rotulo: 'Equipe e acessos', icone: 'user-cog', papeis: ['titular'] },
-    { id: 'perfil', rotulo: 'Perfil', icone: 'badge-check', papeis: ['titular', 'medico', 'secretaria', 'clinica'] },
-    { id: 'admin', rotulo: 'Clientes', icone: 'briefcase-medical', papeis: ['admin'] },
-    { id: 'auditoria', rotulo: 'Auditoria', icone: 'scroll-text', papeis: ['admin'] }
+  var TODOS = ['titular', 'medico', 'secretaria', 'clinica'];
+  var TELAS = {
+    inicio: { rotulo: 'Início', icone: 'house', papeis: ['titular', 'medico', 'secretaria'] },
+    agenda: { rotulo: 'Agenda', icone: 'calendar-days', papeis: TODOS },
+    pacientes: { rotulo: 'Pacientes', icone: 'users-round', papeis: ['titular', 'medico', 'secretaria'] },
+    estudio: { rotulo: 'Estúdio', icone: 'sparkles', papeis: ['titular', 'medico'] },
+    conteudo: { rotulo: 'Calendário de conteúdo', icone: 'calendar-range', papeis: ['titular', 'medico'] },
+    pagina: { rotulo: 'Minha página', icone: 'panels-top-left', papeis: ['titular', 'medico'] },
+    locais: { rotulo: 'Locais e clínicas', icone: 'building-2', papeis: ['titular', 'medico'] },
+    servicos: { rotulo: 'Serviços e planos', icone: 'stethoscope', papeis: ['titular', 'medico'] },
+    equipe: { rotulo: 'Equipe e acessos', icone: 'user-cog', papeis: ['titular'] },
+    perfil: { rotulo: 'Minha conta', icone: 'circle-user-round', papeis: TODOS.concat(['admin']) },
+    financeiro: { rotulo: 'Financeiro e indicadores', icone: 'wallet', papeis: ['titular', 'medico', 'secretaria'] },
+    admin: { rotulo: 'Clientes', icone: 'briefcase-medical', papeis: ['admin'] },
+    auditoria: { rotulo: 'Auditoria', icone: 'scroll-text', papeis: ['admin'] }
+  };
+  var AREAS = [
+    { id: 'atender', rotulo: 'Atender', icone: 'calendar-days', desc: 'A agenda de todos os locais e o cadastro dos seus pacientes.', telas: ['agenda', 'pacientes'] },
+    { id: 'divulgar', rotulo: 'Divulgar', icone: 'megaphone', desc: 'Conteúdos criados pelo Estúdio e a sua página com agendamento.', telas: ['estudio', 'conteudo', 'pagina'] },
+    { id: 'organizar', rotulo: 'Organizar', icone: 'sliders-horizontal', desc: 'Locais, horários, serviços, equipe e o seu perfil profissional.', telas: ['locais', 'servicos', 'equipe', 'perfil'] },
+    { id: 'resultados', rotulo: 'Resultados', icone: 'trending-up', desc: 'Receitas, comparecimento e ocupação dos próximos dias.', telas: ['financeiro'] }
   ];
-  function menuDoPapel() { var p = A.S.dados.eu.papel; return MENU.filter(function (m) { return m.papeis.indexOf(p) >= 0; }); }
+  var ultima = {}, telaAnterior = '';
+
+  function papel() { return A.S.dados.eu.papel; }
+  function pode(t) { return !!TELAS[t] && TELAS[t].papeis.indexOf(papel()) >= 0; }
+  function ehMedico() { return papel() === 'titular' || papel() === 'medico'; }
+  /** Áreas visíveis para o papel. O perfil só entra em "Organizar" para médicos (perfil profissional). */
+  A.areasDoPapel = function () {
+    return AREAS.map(function (a) {
+      return { id: a.id, rotulo: a.rotulo, icone: a.icone, desc: a.desc, telas: a.telas.filter(function (t) { return pode(t) && (t !== 'perfil' || ehMedico()); }) };
+    }).filter(function (a) { return a.telas.length; });
+  };
+  A.rotuloTela = function (t) { return t === 'perfil' && ehMedico() ? 'Perfil profissional' : TELAS[t].rotulo; };
+  A.iconeTela = function (t) { return TELAS[t].icone; };
+  function guiado() { return pode('inicio') && A.areasDoPapel().length >= 2; }
+  function telasDiretas() { return Object.keys(TELAS).filter(function (t) { return t !== 'inicio' && pode(t); }).sort(function (a, b) { return (a === 'perfil') - (b === 'perfil'); }); }
 
   /* -------------------------------------------------------------- entrar */
   function telaEntrar(msg) {
@@ -49,7 +71,7 @@
     var rd = document.getElementById('reiniciar-demo'); if (rd) rd.onclick = function () { window.DEMO.reiniciar(); };
   }
   function entrar(d) {
-    return A.api('entrar', d).then(function (r) { A.store.set('fluyan_token', r.token); A.iniciar(); }).catch(function (e) { A.aviso(e.message, true); });
+    return A.api('entrar', d).then(function (r) { A.store.set('fluyan_token', r.token); if (!A.S.autoEntrou || A.S.dados) location.hash = ''; A.iniciar(); }).catch(function (e) { A.aviso(e.message, true); });
   }
 
   /* --------------------------------------------------------------- convite */
@@ -68,46 +90,58 @@
   }
 
   /* ----------------------------------------------------------------- casca */
+  function item(nav, href, icone, rotulo) { return '<a class="item" href="#' + href + '" data-nav="' + nav + '">' + A.i(icone) + '<span>' + rotulo + '</span></a>'; }
   function casca() {
-    var d = A.S.dados, eu = d.eu, itens = menuDoPapel();
-    var nav = itens.map(function (m) {
-      if (m.grupo) return '<div class="grupo">' + m.grupo + '</div>';
-      return '<a class="item" href="#' + m.id + '" data-tela="' + m.id + '">' + A.i(m.icone) + m.rotulo + '</a>';
-    }).join('');
-    var principais = itens.filter(function (m) { return m.id; }).slice(0, 4);
+    var d = A.S.dados, eu = d.eu, g = guiado(), areas = A.areasDoPapel();
+    var itens = g ? [['inicio', 'inicio', 'house', 'Início']].concat(areas.map(function (a) { return [a.id, a.id, a.icone, a.rotulo]; }))
+      : telasDiretas().map(function (t) { return [t, t, TELAS[t].icone, TELAS[t].rotulo]; });
+    var movel = itens.slice(0, 5);
+    if (g && movel.length < 5 && !ehMedico()) movel.push(['perfil', 'perfil', 'circle-user-round', 'Conta']);
     document.getElementById('raiz').innerHTML =
       (A.ehDemo() ? '<div class="demo-faixa">Demonstração com dados fictícios. Nada aqui é real. <a href="#" id="sair-demo">Sair</a></div>' : '') +
-      '<div class="casca"><nav class="lateral" aria-label="Menu principal"><a class="marca" href="#inicio">' + A.simbolo(32, 'var(--mf-petroleo-2)') + '<span class="nome">Fluyan</span></a>' + nav +
-      '<div class="rodape"><b>' + A.esc(eu.nome) + '</b><small>' + A.esc(A.PAPEL[eu.papel]) + (d.tenant ? ' · ' + A.esc(d.tenant.nome) : '') + '</small><br>' +
+      '<div class="casca"><nav class="lateral" aria-label="Menu principal"><a class="marca" href="#' + itens[0][1] + '">' + A.simbolo(32, 'var(--mf-petroleo-2)') + '<span class="nome">Fluyan</span></a>' +
+      itens.map(function (x) { return item(x[0], x[1], x[2], x[3]); }).join('') +
+      '<div class="rodape"><b>' + A.esc(eu.nome) + '</b><small>' + A.esc(A.PAPEL[eu.papel]) + (d.tenant ? ' · ' + A.esc(d.tenant.nome) : '') + '</small>' +
+      (g ? '<a class="item conta" href="#perfil" data-nav="perfil">' + A.i('circle-user-round') + '<span>Minha conta</span></a>' : '') +
       '<button id="sair">' + A.i('log-out') + 'Sair</button></div></nav>' +
       '<main class="area" id="conteudo" tabindex="-1"></main></div>' +
-      '<nav class="barra-movel" aria-label="Menu">' + principais.map(function (m) { return '<a href="#' + m.id + '" data-tela="' + m.id + '">' + A.i(m.icone) + '<span>' + m.rotulo.split(' ')[0] + '</span></a>'; }).join('') +
-      (itens.filter(function (m) { return m.id; }).length > 4 ? '<button id="mais">' + A.i('menu') + '<span>Mais</span></button>' : '') + '</nav>';
-    document.getElementById('sair').onclick = sair;
-    var sd = document.getElementById('sair-demo'); if (sd) sd.onclick = function (e) { e.preventDefault(); sair(); };
-    var mais = document.getElementById('mais');
-    if (mais) mais.onclick = function () {
-      var m = A.modal({ titulo: 'Menu', corpo: '<ul class="lista">' + itens.filter(function (x) { return x.id; }).map(function (x) {
-        return '<li class="clicavel" data-ir="' + x.id + '">' + A.i(x.icone) + '<span class="meio"><b>' + x.rotulo + '</b></span>' + A.i('chevron-right') + '</li>'; }).join('') +
-        '<li class="clicavel" data-ir="sair">' + A.i('log-out') + '<span class="meio"><b>Sair</b></span></li></ul>' });
-      m.el.querySelectorAll('[data-ir]').forEach(function (li) { li.onclick = function () { m.fechar(); if (li.dataset.ir === 'sair') sair(); else location.hash = li.dataset.ir; }; });
-    };
+      '<nav class="barra-movel" aria-label="Menu">' + movel.map(function (x) { return '<a href="#' + x[1] + '" data-nav="' + x[0] + '">' + A.i(x[2]) + '<span>' + x[3].split(' ')[0] + '</span></a>'; }).join('') + '</nav>';
+    document.getElementById('sair').onclick = A.sair;
+    var sd = document.getElementById('sair-demo'); if (sd) sd.onclick = function (e) { e.preventDefault(); A.sair(); };
   }
-  function sair() { A.api('sair').catch(function () { }).then(function () { A.store.del('fluyan_token'); A.S.dados = null; location.hash = ''; telaEntrar(); }); }
+  A.sair = function () { A.api('sair').catch(function () { }).then(function () { A.store.del('fluyan_token'); A.S.dados = null; location.hash = ''; telaEntrar(); }); };
 
   /* ----------------------------------------------------------------- rotas */
   A.ir = function () {
     if (!A.S.dados) return;
-    var itens = menuDoPapel().filter(function (m) { return m.id; });
-    var tela = (location.hash || '').replace('#', '').split('/')[0];
-    if (!itens.some(function (m) { return m.id === tela; })) tela = itens[0].id;
-    A.S.tela = tela;
-    document.querySelectorAll('[data-tela]').forEach(function (a) { a.classList.toggle('ativo', a.dataset.tela === tela); });
-    var el = document.getElementById('conteudo');
-    try { (A.telas[tela] || function (e) { e.innerHTML = A.vazio('construction', 'Em construção', 'Esta tela chega na próxima etapa.'); })(el); }
-    catch (e) { console.error(e); el.innerHTML = A.vazio('circle-alert', 'Algo deu errado', e.message); }
+    var g = guiado(), areas = A.areasDoPapel();
+    var h = (location.hash || '').replace('#', '').split('/')[0];
+    var entrada = areas.filter(function (a) { return a.id === h; })[0];
+    if (entrada) { // endereço de área: abre a última tela usada nela
+      h = entrada.telas.indexOf(ultima[entrada.id]) >= 0 ? ultima[entrada.id] : entrada.telas[0];
+      history.replaceState(null, '', '#' + h);
+    }
+    if (!pode(h)) { h = g ? 'inicio' : telasDiretas()[0]; history.replaceState(null, '', '#' + h); }
+    var area = g ? areas.filter(function (a) { return a.telas.indexOf(h) >= 0; })[0] : null;
+    if (area) ultima[area.id] = h;
+    A.S.tela = h;
+    var chave = g ? (area ? area.id : h) : h;
+    document.querySelectorAll('[data-nav]').forEach(function (a) { var on = a.dataset.nav === chave; a.classList.toggle('ativo', on); if (on) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
+
+    var el = document.getElementById('conteudo'), sub = '';
+    if (g && h !== 'inicio') {
+      sub = '<nav class="subnav" aria-label="Você está em"><a class="volta" href="#inicio">' + A.i('arrow-left') + 'Início</a>' +
+        (area ? '<span class="onde">' + A.i(area.icone) + area.rotulo + '</span>' +
+          (area.telas.length > 1 ? '<div class="abas-area" role="tablist">' + area.telas.map(function (t) {
+            return '<a href="#' + t + '" role="tab" aria-selected="' + (t === h) + '"' + (t === h ? ' class="on"' : '') + '>' + A.i(TELAS[t].icone) + A.rotuloTela(t) + '</a>'; }).join('') + '</div>' : '')
+          : '<span class="onde">' + A.i(TELAS[h].icone) + TELAS[h].rotulo + '</span>') + '</nav>';
+    }
+    el.innerHTML = sub + '<div id="tela"></div>';
+    var tela = el.querySelector('#tela');
+    try { (A.telas[h] || function (e) { e.innerHTML = A.vazio('construction', 'Em construção', 'Esta tela chega na próxima etapa.'); })(tela); }
+    catch (e) { console.error(e); tela.innerHTML = A.vazio('circle-alert', 'Algo deu errado', e.message); }
     A.icones();
-    window.scrollTo(0, 0);
+    if (h !== telaAnterior) { window.scrollTo(0, 0); telaAnterior = h; }
   };
   /** Recarrega os dados e redesenha a tela atual. */
   A.atualizar = function () { return A.recarregar().then(A.ir); };
@@ -115,7 +149,13 @@
   A.iniciar = function () {
     var conv = (location.hash.match(/^#convite=([\w-]+)/) || [])[1];
     if (conv) return telaConvite(conv);
+    var auto = A.ehDemo() && new URLSearchParams(location.search).get('entrar');
+    if (auto !== null && auto !== false && window.DEMO_CONTAS && window.DEMO_CONTAS[auto] && !A.S.autoEntrou) { // link direto da demonstração: ?demo=1&entrar=0
+      A.S.autoEntrou = true; A.store.del('fluyan_token');
+      return entrar({ email: window.DEMO_CONTAS[auto].email, senha: window.DEMO_CONTAS[auto].senha });
+    }
     if (!A.store.get('fluyan_token')) return telaEntrar();
+    ultima = {}; telaAnterior = '';
     A.recarregar().then(function () { casca(); A.ir(); }).catch(function (e) { telaEntrar(e.codigo === 'sessao' ? '' : e.message); });
   };
   window.addEventListener('hashchange', function () { if (/^#convite=/.test(location.hash)) A.iniciar(); else A.ir(); });

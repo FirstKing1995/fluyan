@@ -1,5 +1,14 @@
 # Fluyan: alterações
 
+## 0.4.0 · 10/11/2026
+- Navegação por áreas: depois de entrar, a tela inicial mostra quatro áreas (Atender, Divulgar, Organizar, Resultados). Cada área abre só as telas dela, em abas, com um caminho de volta ao Início. O menu lateral e a barra do celular mostram as áreas, não todas as telas.
+- Tela inicial guiada: resumo de cada área, "Precisa da sua atenção" com as pendências e um botão para resolver cada uma, atendimentos de hoje e os primeiros passos com "Comece aqui".
+- Clínica parceira e administrador, que têm poucas telas, continuam com menu direto.
+- Perguntas de motivo e justificativa em janelas do próprio sistema, no lugar das caixas do navegador.
+- Ocupação dos próximos dias passou para Resultados. "Sair da conta" também na tela de conta.
+- Link direto da demonstração: `app/?demo=1&entrar=0` (0 médica, 1 secretária, 2 clínica, 3 administrador).
+- A demonstração grava a sessão ao sair da página.
+
 ## 0.3.0 · 03/11/2026
 - Núcleo de regras único (navegador, Apps Script e Node) com 18 testes: agenda multi-local, mínimo e máximo, reserva temporária, concorrência, clínica parceira, secretária, isolamento entre clientes, publicidade médica, Estúdio.
 - Servidor Apps Script: planilha central + uma planilha por cliente, trava de concorrência, proteção contra injeção de fórmula, Estúdio com Claude (saída estruturada, fallback do servidor), assinatura Mercado Pago com ativação por webhook. 8 testes com planilhas simuladas.
