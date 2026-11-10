@@ -47,6 +47,7 @@
   }
 
   var N = window.Fluyan.criarNucleo(banco, { ia: iaDemo, reservaMin: 10 });
+  window.addEventListener('pagehide', function () { try { localStorage.setItem(CHAVE, JSON.stringify(banco.estado)); } catch (e) { /* cheio */ } });
   window.DEMO = { processar: N.processar, banco: banco, reiniciar: function () { localStorage.removeItem(CHAVE); location.reload(); } };
 
   window.DEMO_CONTAS = [

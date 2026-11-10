@@ -179,7 +179,7 @@
   /* ================================================================ PERFIL */
   T.perfil = function (el) {
     var d = A.S.dados, eu = d.eu, m = (eu.papel === 'titular' || eu.papel === 'medico') ? d.medicos[0] : null;
-    el.innerHTML = '<div class="topo"><div><h1>Perfil</h1><p>' + (m ? 'Dados profissionais usados na sua página e no Estúdio.' : 'Sua conta.') + '</p></div></div><div class="grade ' + (m ? 'g2' : '') + '" style="align-items:start">' +
+    el.innerHTML = '<div class="topo"><div><h1>' + (m ? 'Perfil profissional' : 'Minha conta') + '</h1><p>' + (m ? 'Dados profissionais usados na sua página e no Estúdio.' : 'Seu acesso ao Fluyan.') + '</p></div></div><div class="grade ' + (m ? 'g2' : '') + '" style="align-items:start">' +
       (m ? '<form class="cartao" id="f-perfil"><h2>Dados profissionais</h2><div class="campos">' + A.campo('Nome completo', 'nome_completo', m.nome_completo, {}) + A.campo('Nome na página', 'nome_publico', m.nome_publico, { ph: 'Ex.: Dra. Helena Duarte' }) +
         A.campo('Conselho', 'conselho', m.conselho, { opcoes: ['CRM', 'CRN', 'CRP', 'CREFITO', 'CRO', 'COREN'] }) + A.campo('Número do registro', 'registro', m.registro, { req: true }) +
         A.campo('UF', 'uf', m.uf, { attrs: ' maxlength="2"' }) + A.campo('RQE (se especialista)', 'rqe', m.rqe, {}) + A.campo('Especialidade', 'especialidade', m.especialidade, {}) +
@@ -191,7 +191,8 @@
         A.campo('Público que você quer atender', 'publico_alvo', m.publico_alvo, { area: true }) + A.campo('Temas que você não quer abordar', 'temas_evitar', m.temas_evitar, { area: true }) +
         '<button class="btn btn-p">Salvar perfil</button></form>' : '') +
       '<form class="cartao" id="f-senha"><h2>Senha</h2><p class="muted peq" style="margin-top:-6px">' + esc(eu.email) + ' · ' + A.PAPEL[eu.papel] + '</p>' + A.campo('Senha atual', 'atual', '', { tipo: 'password' }) +
-      A.campo('Nova senha', 'nova', '', { tipo: 'password', ajuda: 'Mínimo de 8 caracteres. Trocar a senha encerra as outras sessões.' }) + '<button class="btn btn-s">Trocar senha</button></form></div>';
+      A.campo('Nova senha', 'nova', '', { tipo: 'password', ajuda: 'Mínimo de 8 caracteres. Trocar a senha encerra as outras sessões.' }) + '<div class="entre"><button class="btn btn-s">Trocar senha</button><button type="button" class="btn btn-g" id="sair-conta">' + i('log-out') + 'Sair da conta</button></div></form></div>';
+    el.querySelector('#sair-conta').onclick = A.sair;
     var fp = el.querySelector('#f-perfil');
     if (fp) fp.onsubmit = function (e) { e.preventDefault(); var dd = A.form(fp); dd.id = m.id; A.api('perfil', dd).then(function () { A.aviso('Perfil salvo.'); A.atualizar(); }).catch(function (x) { A.aviso(x.message, true); }); };
     var fs = el.querySelector('#f-senha');
@@ -214,8 +215,9 @@
       }).join('') + '</tbody></table></div>';
     el.querySelectorAll('[data-plano]').forEach(function (s) { s.onchange = function () { A.api('adminPlano', { id: s.dataset.plano, plano: s.value }).then(function () { A.aviso('Plano alterado.'); A.atualizar(); }); }; });
     el.querySelectorAll('[data-st]').forEach(function (b) { b.onclick = function () {
-      var x = b.dataset.st.split('|'), just = window.prompt('Justificativa (fica na auditoria):', ''); if (just === null) return;
-      A.api('adminStatusTenant', { id: x[0], status: x[1], justificativa: just }).then(function () { A.aviso('Situação alterada.'); A.atualizar(); }).catch(function (e) { A.aviso(e.message, true); });
+      var x = b.dataset.st.split('|'), susp = x[1] === 'suspenso';
+      A.perguntar(susp ? 'Suspender este cliente?' : 'Reativar este cliente?', susp ? 'O acesso de toda a equipe dele é bloqueado na hora.' : 'O acesso volta a funcionar imediatamente.', { rotulo: 'Justificativa (fica na auditoria)', obrigatorio: true, perigo: susp, confirmar: susp ? 'Suspender' : 'Reativar' })
+        .then(function (just) { if (just === null) return; return A.api('adminStatusTenant', { id: x[0], status: x[1], justificativa: just }).then(function () { A.aviso('Situação alterada.'); A.atualizar(); }); }).catch(function (e) { A.aviso(e.message, true); });
     }; });
     el.querySelector('#novo-ten').onclick = function () {
       A.modal({ titulo: 'Novo cliente', corpo: '<div class="campos">' + A.campo('Nome do cliente', 'nome', '', { req: true, ph: 'Ex.: Consultório Dr. Paulo' }) + A.campo('Tipo', 'tipo', 'individual', { opcoes: [['individual', 'Médico individual'], ['clinica', 'Clínica']] }) +
